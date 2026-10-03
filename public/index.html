@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>HomeFood</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f3f2ef;
+      --surface: #fff;
+      --text: #1a1918;
+      --muted: #7a7874;
+      --line: #e6e4df;
+      --yellow: #ffcc00;
+      --yellow-dark: #f0c000;
+      --black: #1a1918;
+      --green: #0a9f4a;
+      --red: #e03e3e;
+      --shadow: 0 8px 28px rgba(26,25,24,.08);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 100px;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select { font-family: inherit; }
+
+    /* Top like Yandex */
+    .top {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 14px 12px;
+    }
+    .top-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .logo {
+      font-weight: 800; font-size: 1.15rem; letter-spacing: -0.03em; white-space: nowrap;
+    }
+    .logo span { color: #1a1918; background: #ffcc00; padding: 2px 7px; border-radius: 7px; margin-left: 2px; }
+    .addr {
+      flex: 1; min-width: 0;
+      background: var(--bg); border-radius: 12px; padding: 8px 12px;
+      font-size: 0.8rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .addr b { color: var(--text); font-weight: 600; }
+    .top-actions { display: flex; gap: 6px; align-items: center; }
+    .icon-btn {
+      border: none; background: var(--bg); border-radius: 12px;
+      width: 40px; height: 40px; cursor: pointer; font-size: 1rem;
+    }
+    .user-mini {
+      font-size: 0.72rem; font-weight: 700; background: #21201f; color: #fc0;
+      border-radius: 10px; padding: 8px 10px; max-width: 110px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .search-bar {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg); border-radius: 14px; padding: 0 14px;
+      border: 1px solid transparent;
+    }
+    .search-bar:focus-within { border-color: #ddd; background: #fff; }
+    .search-bar span { opacity: 0.5; }
+    .search-bar input {
+      flex: 1; border: none; background: transparent; padding: 12px 0;
+      font-size: 0.95rem; outline: none; color: var(--text);
+    }
+
+    .wrap { max-width: 720px; margin: 0 auto; padding: 14px 14px 24px; }
+
+    /* Cats */
+    .cats {
+      display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 12px;
+      margin: 0 -2px;
+    }
+    .cats::-webkit-scrollbar { display: none; }
+    .cat {
+      flex: 0 0 auto; border: none; background: #fff; border: 1px solid var(--line);
+      border-radius: 999px; padding: 8px 14px; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; color: var(--text);
+    }
+    .cat.active { background: var(--black); color: #fff; border-color: var(--black); }
+
+    /* Sections */
+    .sec-title {
+      font-size: 1.25rem; font-weight: 800; letter-spacing: -0.03em;
+      margin: 14px 0 12px;
+    }
+    .h-scroll {
+      display: grid; grid-auto-flow: column; grid-auto-columns: 160px;
+      gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 18px;
+    }
+    .h-scroll::-webkit-scrollbar { display: none; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    @media (min-width: 640px) {
+      .grid { grid-template-columns: repeat(3, 1fr); }
+      .wrap { max-width: 960px; }
+    }
+
+    /* Cards */
+    .card {
+      background: #fff; border-radius: 18px; overflow: hidden;
+      box-shadow: 0 2px 10px rgba(26,25,24,.05);
+      border: 1px solid rgba(0,0,0,.03);
+      transition: transform .15s ease;
+    }
+    .card:active { transform: scale(0.98); }
+    .card-img {
+      height: 130px; background-size: cover; background-position: center;
+      position: relative; background-color: #eee; overflow: hidden;
+    }
+    .card-img img { width:100%; height:100%; object-fit:cover; display:block; }
+    .card-body h4 { min-height: 2.4em; }
+    .card-img .badge {
+      position: absolute; left: 8px; top: 8px;
+      background: #fff; border-radius: 8px; padding: 3px 8px;
+      font-size: 0.68rem; font-weight: 700;
+    }
+    .card-body { padding: 10px; }
+    .card-body h4 {
+      font-size: 0.88rem; font-weight: 700; line-height: 1.25;
+      margin-bottom: 4px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .price-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 8px;
+    }
+    .price { font-weight: 800; font-size: 0.95rem; }
+    .meta { font-size: 0.72rem; color: var(--muted); }
+    .plus {
+      width: 32px; height: 32px; border-radius: 10px; border: none;
+      background: var(--yellow); color: var(--black); font-weight: 800;
+      font-size: 1.1rem; cursor: pointer; line-height: 1;
+    }
+    .plus:active { transform: scale(0.95); }
+    .nutri {
+      display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px;
+    }
+    .nutri span {
+      background: #f3f3f3; border-radius: 6px; padding: 2px 6px;
+      font-size: 0.65rem; font-weight: 700; color: #555;
+    }
+    .desc-sm {
+      font-size: 0.72rem; color: var(--muted); margin-top: 4px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+      line-height: 1.3;
+    }
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 80;
+      display: none; align-items: flex-end; justify-content: center;
+    }
+    .modal-bg.show { display: flex; }
+    .modal {
+      background: #fff; width: 100%; max-width: 480px; border-radius: 20px 20px 0 0;
+      padding: 16px; max-height: 85vh; overflow: auto;
+    }
+    .modal img { width: 100%; height: 180px; object-fit: cover; border-radius: 14px; margin-bottom: 12px; }
+    .modal h3 { font-size: 1.2rem; margin-bottom: 6px; }
+    .modal .nutri span { font-size: 0.75rem; padding: 4px 8px; }
+
+
+    .kit-card .card-img { height: 100px; }
+    .rating { color: #f5a623; font-weight: 700; font-size: 0.78rem; }
+
+    /* Login */
+    .login-page {
+      min-height: 100vh; display: flex; flex-direction: column;
+      background: #fff; padding-bottom: 0;
+    }
+    .login-hero {
+      min-height: 38vh;
+      background:
+        linear-gradient(165deg, rgba(26,25,24,.25), rgba(26,25,24,.78)),
+        url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=80') center/cover;
+      color: #fff; padding: 32px 22px 24px; display: flex; flex-direction: column; justify-content: flex-end;
+    }
+    .login-hero .brand {
+      font-weight: 800; font-size: 0.95rem; letter-spacing: -0.02em; margin-bottom: 14px;
+    }
+    .login-hero .brand span {
+      background: #ffcc00; color: #1a1918; padding: 2px 7px; border-radius: 6px; margin-left: 2px;
+    }
+    .login-hero h1 { font-size: 1.75rem; font-weight: 800; line-height: 1.15; margin-bottom: 8px; letter-spacing: -0.03em; }
+    .login-hero p { opacity: .9; font-size: .92rem; margin-bottom: 14px; line-height: 1.4; max-width: 320px; }
+    .steps { display: grid; gap: 8px; }
+    .steps div {
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px; padding: 10px 12px; font-size: .82rem;
+    }
+    .login-box { padding: 22px 18px 36px; max-width: 420px; margin: 0 auto; width: 100%; }
+    .login-box h2 { font-size: 1.3rem; margin-bottom: 6px; letter-spacing: -0.02em; }
+    .login-box .sub { color: var(--muted); font-size: .88rem; margin-bottom: 14px; }
+    .demo {
+      background: #f6f5f2; border-radius: 14px; padding: 12px 14px; font-size: .74rem;
+      color: var(--muted); line-height: 1.65; margin-bottom: 14px; border: 1px solid var(--line);
+    }
+    .demo code { color: var(--black); font-weight: 700; font-size: .78rem; }
+    .demo details { margin-top: 6px; }
+    .demo summary { cursor: pointer; font-weight: 700; color: var(--text); }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: .75rem; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+    input, select {
+      width: 100%; border: 1.5px solid #cfcfcf; border-radius: 12px;
+      padding: 13px 14px; font-size: .95rem; outline: none; background: #fafafa;
+    }
+    input:focus, select:focus { border-color: #222; background: #fff; }
+    .btn {
+      border: none; cursor: pointer; border-radius: 14px;
+      padding: 14px 16px; font-weight: 700; font-size: .9rem;
+    }
+    .btn-main { background: var(--yellow); color: var(--black); width: 100%; box-shadow: 0 4px 14px rgba(255,204,0,.35); }
+    .btn-main:active { background: var(--yellow-dark); }
+    .btn-reg {
+      width: 100%; margin-top: 8px; background: #fff; color: var(--green);
+      border: 1.5px solid var(--green);
+    }
+    .btn-sm { padding: 8px 12px; font-size: .78rem; border-radius: 10px; }
+    .btn-dark { background: var(--black); color: #fff; }
+    .btn-ghost { background: #fff; border: 1px solid var(--line); }
+
+    /* Bottom tabs */
+    .bottom-nav {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+      background: rgba(255,255,255,.96); border-top: 1px solid var(--line);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      display: none; padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+    }
+    .bottom-nav.show { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
+    .nav-item {
+      border: none; background: transparent; padding: 8px 4px;
+      font-size: 0.65rem; font-weight: 600; color: var(--muted); cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+    }
+    .nav-item.active { color: var(--black); }
+    .nav-item .ic { font-size: 1.15rem; position: relative; }
+    .nav-badge {
+      position: absolute; top: -4px; right: -10px;
+      background: var(--red); color: #fff; border-radius: 999px;
+      font-size: 0.6rem; min-width: 16px; height: 16px;
+      display: flex; align-items: center; justify-content: center; padding: 0 4px;
+    }
+
+    /* Cart bar */
+    .cart-bar {
+      position: fixed; left: 50%; transform: translateX(-50%);
+      bottom: 70px; z-index: 55;
+      width: auto; max-width: calc(100% - 24px);
+      background: rgba(33, 32, 31, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff; border-radius: 999px;
+      padding: 10px 16px; display: none; align-items: center; justify-content: center;
+      gap: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.2); cursor: pointer;
+      font-size: 0.84rem;
+    }
+    .cart-bar.show { display: inline-flex; }
+    .cart-bar b { color: var(--yellow); font-size: 0.9rem; }
+
+    /* Panels */
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .order-list .row {
+      display: grid; grid-template-columns: 56px 1fr auto; gap: 10px;
+      background: #fff; border-radius: 14px; padding: 10px; margin-bottom: 8px; align-items: center;
+    }
+    .thumb {
+      width: 56px; height: 56px; border-radius: 12px; background-size: cover; background-position: center;
+    }
+    .qty { display: flex; align-items: center; gap: 6px; }
+    .qty button {
+      width: 28px; height: 28px; border: none; border-radius: 8px;
+      background: var(--yellow); font-weight: 800; cursor: pointer;
+    }
+    .box { background: #fff; border-radius: 16px; padding: 14px; margin-bottom: 10px; }
+    .status {
+      display: inline-block; padding: 3px 8px; border-radius: 8px;
+      font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+      background: #eee;
+    }
+    .status.pending { background: #e8f0fe; color: #1a73e8; }
+    .status.confirmed, .status.delivered { background: #e6f4ea; color: #137333; }
+    .status.cooking { background: #fef7e0; color: #b06000; }
+    .timeline { display: flex; gap: 3px; margin: 8px 0; }
+    .tl { flex: 1; height: 4px; border-radius: 99px; background: #e5e5e5; }
+    .tl.on { background: var(--green); }
+    .empty { text-align: center; padding: 40px 16px; color: var(--muted); background:#fff; border-radius:18px; border:1px dashed var(--line); }
+    .review {
+      background: #fff; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; font-size: .82rem;
+    }
+    #toast {
+      position: fixed; left: 50%; bottom: 160px; transform: translateX(-50%);
+      background: #21201f; color: #fff; padding: 10px 14px; border-radius: 12px;
+      font-size: .85rem; font-weight: 600; z-index: 100; display: none; max-width: 90vw;
+    }
+    #toast.show { display: block; }
+    
+    .kcal-filter { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    .kcal-filter button {
+      border:1px solid var(--line); background:#fff; border-radius:999px;
+      padding:7px 12px; font-size:.78rem; font-weight:700; cursor:pointer;
+    }
+    .kcal-filter button.active { background:var(--black); color:#fff; border-color:var(--black); }
+    .empty-cart {
+      text-align:center; padding:40px 16px; background:#fff; border-radius:18px;
+    }
+    .empty-cart .big { font-size:3rem; margin-bottom:10px; }
+    .ctor-grid { display:grid; gap:12px; }
+    .ctor-card {
+      background:#fff; border-radius:16px; padding:14px; border:1px solid var(--line);
+    }
+    .ctor-card h4 { margin-bottom:6px; }
+    .ctor-meals { display:grid; gap:8px; margin:10px 0; }
+    .ctor-meal {
+      display:grid; grid-template-columns:48px 1fr auto; gap:8px; align-items:center;
+      background:#f7f7f7; border-radius:12px; padding:8px;
+    }
+    .ctor-meal img { width:48px; height:48px; border-radius:10px; object-fit:cover; }
+    .diff { font-size:.75rem; color:var(--muted); }
+    .diff.ok { color:var(--green); font-weight:700; }
+
+    
+    .hero-ctor {
+      background: linear-gradient(135deg,#21201f,#3d3a36); color:#fff;
+      border-radius:18px; padding:16px; margin-bottom:14px;
+    }
+    .hero-ctor h3 { font-size:1.1rem; margin-bottom:6px; }
+    .hero-ctor p { opacity:.85; font-size:.85rem; margin-bottom:12px; }
+    .order-pretty {
+      background:#fff; border-radius:18px; overflow:hidden; margin-bottom:12px;
+      border:1px solid var(--line); box-shadow:0 2px 12px rgba(0,0,0,.04);
+    }
+    .order-pretty .head { padding:14px; border-bottom:1px solid var(--line); }
+    .order-pretty .body { padding:14px; }
+    .map-box {
+      height:160px; border-radius:14px; overflow:hidden; margin:10px 0;
+      background:#e8eef3; position:relative;
+    }
+    .map-box iframe { width:100%; height:100%; border:0; }
+    .map-caption {
+      position:absolute; left:8px; bottom:8px; background:rgba(255,255,255,.92);
+      border-radius:8px; padding:4px 8px; font-size:.7rem; font-weight:700; z-index:2;
+    }
+    .steps-row { display:flex; justify-content:space-between; gap:4px; margin:10px 0 4px; }
+    .steps-row span { flex:1; text-align:center; font-size:.62rem; color:var(--muted); font-weight:600; }
+    .steps-row span.on { color:var(--green); }
+    .chip-x {
+      display:inline-flex; gap:6px; flex-wrap:wrap; margin:6px 0 10px;
+    }
+    .chip-x label {
+      border:1px solid var(--line); border-radius:999px; padding:6px 10px;
+      font-size:.75rem; font-weight:600; cursor:pointer; background:#fff;
+    }
+    .chip-x input { display:none; }
+    .chip-x input:checked + span, .chip-x label:has(input:checked) {
+      background:#21201f; color:#fff; border-color:#21201f;
+    }
+    .chip-x label:has(input:checked) { background:#21201f; color:#fff; border-color:#21201f; }
+
+    .kitchen-head {
+      background:#fff; border-radius:16px; padding:14px; margin-bottom:12px;
+      border:1px solid var(--line);
+    }
+    .kitchen-head h3 { font-size:1.05rem; margin-bottom:4px; }
+    .kitchen-head .rev { margin-top:10px; }
+    .top-actions .icon-btn#btnCtorTop {
+      background: var(--yellow); border-radius:12px;
+    }
+    .pay-methods { display:grid; gap:8px; margin:12px 0; }
+    .pay-methods button {
+      width:100%; text-align:left; padding:14px 16px; border-radius:14px;
+      border:1.5px solid var(--line); background:#fff; font-weight:700; cursor:pointer;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .pay-methods button:active { border-color:var(--black); background:#fafafa; }
+    .pay-methods button small { font-weight:500; color:var(--muted); }
+    .hidden { display: none !important; }
+    .actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <!-- LOGIN -->
+  <div id="view-login" class="login-page">
+    <div class="login-hero">
+      <div class="brand">Home<span>Food</span></div>
+      <h1>Домашняя еда и ПП без лишней суеты</h1>
+      <p>Кухни рядом, прозрачный состав и заказ за минуту.</p>
+      <div class="steps">
+        <div>1. Выберите кухню или соберите рацион</div>
+        <div>2. Оформите заказ и оплатите</div>
+        <div>3. Следите за статусом на карте</div>
+      </div>
+    </div>
+    <div class="login-box">
+      <h2 id="authTitle">Вход</h2>
+      <p class="sub" id="authSub">Введите номер телефона</p>
+      <div class="demo" id="demoBox">
+        <b>Вход по номеру · без пароля</b>
+        <div style="margin-top:6px">Клиент: <code>+998903333333</code></div>
+        <details>
+          <summary>Все тестовые аккаунты</summary>
+          Fast PP <code>+998902222222</code><br>
+          Mamochka <code>+998905555555</code><br>
+          Green Bowl <code>+998904444444</code><br>
+          Protein Lab <code>+998906666666</code><br>
+          Tashkent Home <code>+998907777777</code><br>
+          Админ <code>+998901111111</code>
+        </details>
+      </div>
+      <div id="registerFields" class="hidden">
+        <div class="field"><label>Имя</label><input id="regName" placeholder="Как вас зовут" /></div>
+      </div>
+      <div class="field">
+        <label>Номер телефона</label>
+        <input id="loginPhone" placeholder="+998 90 123 45 67" inputmode="tel" />
+      </div>
+      <button class="btn btn-main" id="btnAuthPrimary" onclick="doAuth()">Войти</button>
+      <button class="btn btn-reg" id="btnAuthSecondary" onclick="toggleAuthMode()">Регистрация</button>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="view-app" class="hidden">
+    <div class="top">
+      <div class="top-row">
+        <div class="logo">Home<span>Food</span></div>
+        <div class="addr">Доставка · <b>Ташкент</b></div>
+        <div class="top-actions">
+          <button class="icon-btn" id="btnCtorTop" onclick="tab('ctor')" title="Конструктор" style="width:auto;padding:0 12px;font-size:0.75rem;font-weight:800">Рацион</button>
+          <div class="user-mini" id="userChip">—</div>
+          <button class="icon-btn" onclick="logout()" title="Выйти">⎋</button>
+        </div>
+      </div>
+      <div class="search-bar">
+        <span>🔍</span>
+        <input id="globalSearch" placeholder="Блюдо, кухня или кухня ПП" oninput="onSearch()" />
+      </div>
+    </div>
+
+    <div class="wrap">
+      <!-- HOME -->
+      <div id="p-home" class="panel active">
+        <div class="cats" id="cats"></div>
+        <div class="sec-title">Популярное</div>
+        <div class="h-scroll" id="popularList"></div>
+        <div class="sec-title">Кухни рядом</div>
+        <div class="grid" id="kitchensList"></div>
+      </div>
+
+      <!-- MENU -->
+      <div id="p-menu" class="panel">
+        <div class="sec-title">Меню</div>
+        <div class="cats" id="kitFilters"></div>
+        <div id="kitchenHead"></div>
+        <div class="kcal-filter" id="kcalFilter"></div>
+        <div class="grid" id="menuList"></div>
+      </div>
+
+      <!-- CART / ORDER -->
+      <div id="p-cart" class="panel">
+        <div class="sec-title">Корзина</div>
+        <div class="box">
+          <div class="field"><label>Кухня</label><select id="orderKitchen" onchange="qtyMap={};renderCartDishes()"></select></div>
+          <div class="field"><label>Имя</label><input id="orderName" /></div>
+          <div class="field"><label>Телефон</label><input id="orderPhone" /></div>
+          <div class="field"><label>Адрес</label><input id="orderAddress" placeholder="Улица, дом, квартира" /></div>
+          <div class="field"><label>Ко времени</label>
+            <select id="orderSlot">
+              <option value="Как можно скорее">Как можно скорее</option>
+              <option value="К 12:00">К 12:00</option>
+              <option value="К 13:00">К 13:00</option>
+              <option value="К 15:00">К 15:00</option>
+              <option value="К 18:00">К 18:00</option>
+              <option value="К 19:00">К 19:00</option>
+              <option value="К 20:00">К 20:00</option>
+            </select>
+          </div>
+          <div class="field"><label>Промокод</label><input id="orderPromo" placeholder="HOMEFOOD10" /></div>
+          <div class="field" style="margin:0"><label>Комментарий</label><input id="orderComment" placeholder="Код домофона, этаж..." /></div>
+        </div>
+        <div class="order-list" id="orderDishes"></div>
+        <div class="box">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;color:var(--muted);font-size:.88rem">
+            <span>Блюда</span><span id="cartSub">0 сум</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;color:var(--muted);font-size:.88rem">
+            <span>Доставка</span><span id="cartDel">0 сум</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px;color:var(--muted);font-size:.88rem">
+            <span>Скидка</span><span id="cartDiscount">0 сум</span>
+          </div>
+          <div id="cartNutri" class="nutri" style="margin-bottom:12px">
+            <span id="cartKcal">0 ккал</span>
+            <span id="cartP">Б 0 г</span>
+            <span id="cartF">Ж 0 г</span>
+            <span id="cartC">У 0 г</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <b>Итого</b><b id="cartSum" style="font-size:1.15rem">0 сум</b>
+          </div>
+          <button class="btn btn-main" onclick="submitOrder()">Оформить заказ</button>
+        </div>
+      </div>
+
+      <!-- TRACK -->
+      <div id="p-track" class="panel">
+        <div class="sec-title">Мои заказы</div>
+        <div id="trackBox"></div>
+        <div id="myOrdersList"></div>
+      </div>
+
+      
+      <!-- CONSTRUCTOR -->
+      <div id="p-ctor" class="panel">
+        <div class="sec-title">Конструктор рациона</div>
+        <div class="box">
+          <div class="field"><label>Цель по калориям (ккал)</label>
+            <input id="ctorKcal" type="number" value="1800" min="800" max="4000" />
+          </div>
+          <div class="field"><label>Белки минимум (г)</label>
+            <input id="ctorProt" type="number" value="100" min="20" max="250" />
+          </div>
+          <div class="field"><label>Режим</label>
+            <select id="ctorMode">
+              <option value="day">На весь день (3 приёма)</option>
+              <option value="meal">Один приём пищи</option>
+              <option value="week">Неделя (5 дней, оценка)</option>
+            </select>
+          </div>
+          <div class="field"><label>Исключить</label>
+            <div class="chip-x" id="ctorExclude">
+              <label><input type="checkbox" value="молоко" /><span>Молоко</span></label>
+              <label><input type="checkbox" value="острое" /><span>Острое</span></label>
+              <label><input type="checkbox" value="рыба" /><span>Рыба</span></label>
+              <label><input type="checkbox" value="свинина" /><span>Свинина</span></label>
+              <label><input type="checkbox" value="глютен" /><span>Глютен</span></label>
+            </div>
+          </div>
+          <div class="field"><label>Что любите (теги)</label>
+            <select id="ctorTag">
+              <option value="">Любая кухня</option>
+              <option value="пп">ПП</option>
+              <option value="белок">Высокий белок</option>
+              <option value="домашняя">Домашняя</option>
+              <option value="узбекская">Узбекская</option>
+              <option value="вегетарианское">Вегетарианское</option>
+              <option value="спорт">Спорт</option>
+            </select>
+          </div>
+          <button class="btn btn-main" onclick="buildRation()">Подобрать рацион</button>
+          <div class="meta" style="margin-top:10px">Идеи могут быть из разных кухонь. Заказ — только из одной кухни за раз.</div>
+        </div>
+        <div class="ctor-grid" id="ctorResults"></div>
+      </div>
+
+      <!-- PARTNER / ADMIN ORDERS -->
+      <div id="p-orders" class="panel">
+        <div class="sec-title" id="ordersTitle">Заказы</div>
+        <div id="ordersList"></div>
+      </div>
+
+      <!-- PROFILE -->
+      <div id="p-profile" class="panel">
+        <div class="sec-title">Мой профиль</div>
+        <div class="box">
+          <div class="field"><label>Имя</label><input id="profName" placeholder="Ваше имя" /></div>
+          <div class="field"><label>Телефон</label><input id="profPhone" disabled /></div>
+          <div class="field"><label>Адрес доставки</label><input id="profAddress" placeholder="Город, улица, дом, квартира" /></div>
+          <div class="field"><label>Карта (для демо)</label><input id="profCard" placeholder="•••• 1234" maxlength="20" /></div>
+          <div class="field" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <label style="margin:0">Уведомления о заказах</label>
+            <input id="profNotif" type="checkbox" style="width:auto;accent-color:#00a046" />
+          </div>
+          <button class="btn btn-main" onclick="saveProfile()">Сохранить</button>
+        </div>
+        <div class="box">
+          <b>Служба поддержки</b>
+          <div class="meta" style="margin:8px 0 12px">Помощь по заказам и приложению</div>
+          <button class="btn btn-ghost btn-sm" onclick="openSupport()">Написать в поддержку</button>
+        </div>
+        <div class="box" id="partnerApplyBox">
+          <b>Стать кухней-партнёром</b>
+          <div class="meta" style="margin:8px 0 10px">Оставьте заявку — свяжемся</div>
+          <div class="field"><label>Название кухни</label><input id="paKitchen" placeholder="Моя домашняя кухня" /></div>
+          <div class="field"><label>Телефон</label><input id="paPhone" placeholder="+998..." /></div>
+          <div class="field"><label>Комментарий</label><input id="paComment" placeholder="Район, специализация" /></div>
+          <button class="btn btn-main" onclick="submitPartner()">Отправить заявку</button>
+        </div>
+        <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="logout()">Выйти из аккаунта</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="cart-bar" id="cartBar" onclick="tab('cart')">
+    <span id="cartBarCount">0 товаров</span>
+    <b id="cartBarSum">0 сум</b>
+  </div>
+
+  <nav class="bottom-nav" id="bottomNav"></nav>
+  <div class="modal-bg" id="dishModal" onclick="closeDish()"></div>
+  <div class="modal-bg" id="payModal" onclick="closePay()"></div>
+  <div id="toast"></div>
+
+  <script>
+    const API = (window.location.origin && window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:3000') + '/api';
+    const STATUS_FLOW = ['pending','confirmed','cooking','ready','delivering','delivered'];
+    const CATS = ['Все','Завтрак','Обед','Ужин','ПП','Супы','Закуска'];
+        const DISH_IMG = {
+      'd-001':'https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=900&q=80',
+      'd-002':'https://images.unsplash.com/photo-1510693206972-df098062cb71?auto=format&fit=crop&w=900&q=80',
+      'd-003':'https://images.unsplash.com/photo-1485921325833-c519f76c4927?auto=format&fit=crop&w=900&q=80',
+      'd-004':'https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=900&q=80',
+      'd-005':'https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=900&q=80',
+      'd-006':'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80',
+      'd-007':'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80',
+      'd-008':'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80',
+      'd-009':'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80',
+      'd-010':'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&w=900&q=80',
+      'd-011':'https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=900&q=80',
+      'd-012':'https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?auto=format&fit=crop&w=900&q=80',
+      'd-013':'https://images.unsplash.com/photo-1432139555190-58524dae6a55?auto=format&fit=crop&w=900&q=80',
+      'd-014':'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=900&q=80',
+      'd-015':'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80',
+      'd-016':'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?auto=format&fit=crop&w=900&q=80',
+      'd-017':'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=900&q=80',
+      'd-018':'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=900&q=80',
+      'd-019':'https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&w=900&q=80',
+      'd-020':'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=80'
+    };
+    const KITCHEN_IMG = {
+      'kit-001':'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=900&q=80',
+      'kit-002':'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=900&q=80',
+      'kit-003':'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=80',
+      'kit-004':'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80',
+      'kit-005':'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=80'
+    };
+    const FALLBACK = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80';
+
+    let user=null, kitchens=[], menu=[], reviews=[], qtyMap={}, activeCat='Все', filterKitchen='all', authMode='login', maxKcal=0;
+    let lastOrderId=localStorage.getItem('hf_last_order')||'';
+    let searchQ='';
+
+    const $=id=>document.getElementById(id);
+    const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const fmt=n=>Number(n||0).toLocaleString('ru-RU');
+    const role=()=>user?.role||'guest';
+    const isClient=()=>role()==='client';
+    const isPartner=()=>role()==='partner';
+    const isAdmin=()=>role()==='admin';
+    const dishImg=id=>DISH_IMG[id]||FALLBACK;
+    const kitImg=id=>KITCHEN_IMG[id]||FALLBACK;
+
+    function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+
+    function toggleAuthMode(){
+      authMode=authMode==='login'?'register':'login';
+      const reg=authMode==='register';
+      $('authTitle').textContent=reg?'Регистрация':'Вход';
+      $('authSub').textContent=reg?'Создайте аккаунт по номеру':'Введите номер телефона';
+      $('demoBox').style.display=reg?'none':'block';
+      $('registerFields').classList.toggle('hidden',!reg);
+      $('btnAuthPrimary').textContent=reg?'Зарегистрироваться':'Войти';
+      $('btnAuthSecondary').textContent=reg?'Уже есть аккаунт':'Регистрация';
+      $('loginPhone').value=reg?'+998':'';
+      if(reg){
+        setTimeout(()=>{ const el=$('loginPhone'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); },50);
+      }
+    }
+
+    async function doAuth(){
+      const phone=$('loginPhone').value.trim();
+      if(!phone)return toast('Введите телефон');
+      try{
+        if(authMode==='register'){
+          const name=($('regName').value||'').trim();
+          if(!name)return toast('Введите имя');
+          const r=await fetch(API+'/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,name,role:'client'})});
+          if(!r.ok)throw new Error((await r.json()).message||'Ошибка');
+          user=await r.json(); toast('Аккаунт создан');
+        }else{
+          const r=await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone})});
+          if(!r.ok)throw new Error((await r.json()).message||'Ошибка');
+          user=await r.json(); toast('Привет, '+user.name);
+        }
+        localStorage.setItem('hf_user',JSON.stringify(user));
+        await boot();
+      }catch(e){toast(e.message)}
+    }
+
+    function logout(){
+      user=null; localStorage.removeItem('hf_user');
+      $('view-app').classList.add('hidden');
+      $('view-login').classList.remove('hidden');
+      $('bottomNav').classList.remove('show');
+      $('cartBar').classList.remove('show');
+    }
+
+    function fillProfile(){
+      if(!user) return;
+      $('profName').value = user.name || '';
+      $('profPhone').value = user.phone || '';
+      $('profAddress').value = user.address || '';
+      $('profCard').value = user.card || '';
+      $('profNotif').checked = user.notifications !== false;
+    }
+
+    async function saveProfile(){
+      if(!user) return;
+      try{
+        const body = {
+          name: $('profName').value.trim(),
+          address: $('profAddress').value.trim(),
+          card: $('profCard').value.trim(),
+          notifications: $('profNotif').checked
+        };
+        const r = await fetch(API + '/auth/profile/' + user.id, {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+        });
+        if(!r.ok) throw new Error((await r.json()).message || 'Ошибка');
+        user = await r.json();
+        localStorage.setItem('hf_user', JSON.stringify(user));
+        $('userChip').textContent = user.name;
+        if($('orderAddress') && user.address) $('orderAddress').value = user.address;
+        if($('orderName')) $('orderName').value = user.name;
+        toast('Профиль сохранён');
+      }catch(e){ toast(e.message); }
+    }
+
+    function openSupport(){
+      const msg = encodeURIComponent('Здравствуйте! Нужна помощь по HomeFood.');
+      window.open('https://t.me/share/url?url=&text=' + msg, '_blank');
+      toast('Откройте чат поддержки');
+    }
+
+    async function boot(){
+      $('view-login').classList.add('hidden');
+      $('view-app').classList.remove('hidden');
+      $('userChip').textContent=user.name;
+      if(isClient()){$('orderName').value=user.name;$('orderPhone').value=user.phone;if(user.address)$('orderAddress').value=user.address}
+      await Promise.all([
+        fetch(API+'/kitchens').then(r=>r.json()).then(d=>kitchens=d),
+        fetch(API+'/menu').then(r=>r.json()).then(d=>menu=d),
+        fetch(API+'/reviews').then(r=>r.json()).then(d=>reviews=d).catch(()=>reviews=[])
+      ]);
+      buildNav();
+      renderCats();
+      renderPopular();
+      renderKitchens();
+      renderKitFilters();
+      renderMenu();
+      renderOrderKitchenSelect();
+      renderCartDishes();
+      if($('orderPromo')) $('orderPromo').oninput=()=>updateCartBar();
+      loadOrders();
+      loadTrack();
+      if($('btnCtorTop')) $('btnCtorTop').style.display=(isClient()||isAdmin())?'':'none';
+      tab(isPartner()||isAdmin()?'orders':'home');
+    }
+
+    function buildNav(pending=0){
+      const items=[];
+      if(isClient()||isAdmin()){
+        items.push(['home','🏠','Главная'],['menu','🍽','Меню'],['cart','🛒','Корзина'],['track','📦','Заказы'],['profile','👤','Профиль']);
+      }
+      if(isPartner()){
+        items.push(['orders','📋','Заказы'],['profile','👤','Профиль']);
+      }
+      if(isAdmin() && !items.find(i=>i[0]==='home')){
+        items.unshift(['home','🏠','Главная'],['menu','🍽','Меню']);
+      }
+      if(isAdmin() && !items.find(i=>i[0]==='orders')) items.push(['orders','📋','Заказы']);
+      if(isAdmin() && !items.find(i=>i[0]==='profile')) items.push(['profile','👤','Профиль']);
+      $('bottomNav').innerHTML=items.map(([id,ic,label],i)=>`
+        <button class="nav-item ${i===0?'active':''}" data-t="${id}" onclick="tab('${id}')">
+          <span class="ic">${ic}${id==='orders'&&pending?`<span class="nav-badge">${pending}</span>`:''}</span>
+          <span>${label}</span>
+        </button>`).join('');
+      $('bottomNav').classList.add('show');
+    }
+
+    function tab(name){
+      document.querySelectorAll('.bottom-nav .nav-item').forEach(b=>b.classList.toggle('active',b.dataset.t===name));
+      ['home','menu','cart','ctor','track','orders','profile'].forEach(n=>{
+        const el=$('p-'+n); if(el) el.classList.toggle('active',n===name);
+      });
+      if(name==='orders')loadOrders();
+      if(name==='track')loadTrack();
+      if(name==='menu'){renderKcalFilter();renderMenu();}
+      if(name==='cart')renderCartDishes();
+      if(name==='home'){renderPopular();renderKitchens()}
+      if(name==='profile')fillProfile();
+      updateCartBar();
+    }
+
+    function onSearch(){
+      searchQ=($('globalSearch').value||'').toLowerCase().trim();
+      renderKitchens(); renderMenu(); renderPopular();
+    }
+
+    function renderCats(){
+      $('cats').innerHTML=CATS.map(c=>`
+        <button class="cat ${activeCat===c?'active':''}" onclick="activeCat='${c}';renderCats();renderPopular();renderMenu()">${c}</button>
+      `).join('');
+    }
+
+    function matchCat(d){
+      if(activeCat==='Все')return true;
+      const bag=((d.category||'')+' '+(d.tags||[]).join(' ')).toLowerCase();
+      if(activeCat==='ПП')return bag.includes('пп');
+      if(activeCat==='Супы')return bag.includes('суп');
+      return bag.includes(activeCat.toLowerCase());
+    }
+
+    function renderPopular(){
+      let list=menu.filter(m=>m.popular && matchCat(m));
+      if(searchQ)list=list.filter(d=>(d.name+' '+(d.description||'')).toLowerCase().includes(searchQ));
+      list=list.slice(0,8);
+      $('popularList').innerHTML=list.map(d=>dishCard(d,true)).join('')||'<div class="empty">Нет хитов</div>';
+    }
+
+    function dishCard(d, compact){
+      const src = dishImg(d.id);
+      return `<article class="card" onclick="openDish('${d.id}')" style="cursor:pointer">
+        <div class="card-img">
+          <img src="${src}" alt="${esc(d.name)}" loading="lazy"
+            onerror="this.onerror=null;this.src='${FALLBACK}'" />
+          ${d.popular?'<div class="badge">Хит</div>':''}
+        </div>
+        <div class="card-body">
+          <h4>${esc(d.name)}</h4>
+          <div class="desc-sm">${esc(d.description||'')}</div>
+          <div class="nutri">
+            <span>${d.calories||'—'} ккал</span>
+            <span>Б ${d.proteins??'—'}</span>
+            <span>Ж ${d.fats??'—'}</span>
+            <span>У ${d.carbs??'—'}</span>
+          </div>
+          <div class="price-row">
+            <div class="price">${fmt(d.price)} сум</div>
+            <button class="plus" onclick="event.stopPropagation();addDish('${d.id}')">+</button>
+          </div>
+        </div>
+      </article>`;
+    }
+
+    function openDish(id){
+      const d = menu.find(m => m.id === id);
+      if(!d) return;
+      const kit = (kitchens.find(k => k.id === d.kitchenId) || {}).name || '';
+      $('dishModal').innerHTML = `
+        <div class="modal" onclick="event.stopPropagation()">
+          <img src="${dishImg(d.id)}" alt="" onerror="this.src='${FALLBACK}'" />
+          <h3>${esc(d.name)}</h3>
+          <div class="meta" style="margin-bottom:8px">${esc(kit)} · ${esc(d.category||'')}</div>
+          <p style="font-size:.9rem;line-height:1.45;margin-bottom:10px">${esc(d.description||'')}</p>
+          <div class="nutri" style="margin-bottom:12px">
+            <span>${d.calories||'—'} ккал</span>
+            <span>Белки ${d.proteins??'—'} г</span>
+            <span>Жиры ${d.fats??'—'} г</span>
+            <span>Углеводы ${d.carbs??'—'} г</span>
+          </div>
+          <div class="price-row">
+            <div class="price" style="font-size:1.15rem">${fmt(d.price)} сум</div>
+            <button class="btn btn-main" style="width:auto;padding:10px 18px" onclick="addDish('${d.id}');closeDish()">В корзину</button>
+          </div>
+          <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="closeDish()">Закрыть</button>
+        </div>`;
+      $('dishModal').classList.add('show');
+    }
+    function closeDish(){ $('dishModal').classList.remove('show'); $('dishModal').innerHTML=''; }
+
+    function addDish(id){
+      const d=menu.find(m=>m.id===id);
+      if(!d)return;
+      // switch kitchen if needed
+      const sel=$('orderKitchen');
+      if(sel && d.kitchenId && sel.value!==d.kitchenId){
+        // clear other kitchen items
+        Object.keys(qtyMap).forEach(k=>{
+          const m=menu.find(x=>x.id===k);
+          if(m && m.kitchenId!==d.kitchenId) delete qtyMap[k];
+        });
+        sel.value=d.kitchenId;
+      }
+      qtyMap[id]=(qtyMap[id]||0)+1;
+      updateCartBar();
+      toast('Добавлено');
+    }
+
+    function openKitchen(id){
+      filterKitchen = id;
+      tab('menu');
+      renderKitFilters();
+      renderMenu();
+    }
+    function renderKitchens(){
+      let list=kitchens;
+      if(searchQ)list=list.filter(k=>(k.name+' '+(k.description||'')).toLowerCase().includes(searchQ));
+      $('kitchensList').innerHTML=list.map(k=>`
+        <article class="card kit-card" onclick="openKitchen('${k.id}')" style="cursor:pointer">
+          <div class="card-img">
+            <img src="${kitImg(k.id)}" alt="${esc(k.name)}" loading="lazy"
+              onerror="this.onerror=null;this.src='${FALLBACK}'" />
+            <div class="badge">★ ${k.rating||'4.7'}</div>
+          </div>
+          <div class="card-body">
+            <h4>${esc(k.name)}</h4>
+            <div class="meta">${esc((k.cuisineTypes||[]).join(' · '))}</div>
+            <div class="price-row">
+              <span class="meta">от 25–40 мин</span>
+              <button class="btn btn-sm btn-dark" onclick="event.stopPropagation();openKitchen('${k.id}')">Меню</button>
+            </div>
+          </div>
+        </article>`).join('')||'<div class="empty">Ничего не найдено</div>';
+    }
+
+    
+    function renderKcalFilter(){
+      const opts = [
+        [0,'Любые ккал'],[400,'до 400'],[500,'до 500'],[600,'до 600']
+      ];
+      $('kcalFilter').innerHTML = opts.map(([v,l]) =>
+        `<button class="${maxKcal===v?'active':''}" onclick="maxKcal=${v};renderKcalFilter();renderMenu()">${l}</button>`
+      ).join('');
+    }
+
+function renderKitFilters(){
+      $('kitFilters').innerHTML=
+        `<button class="cat ${filterKitchen==='all'?'active':''}" onclick="filterKitchen='all';renderKitFilters();renderMenu()">Все кухни</button>`+
+        kitchens.map(k=>`<button class="cat ${filterKitchen===k.id?'active':''}" onclick="filterKitchen='${k.id}';renderKitFilters();renderMenu()">${esc(k.name)}</button>`).join('');
+    }
+
+    function renderMenu(){
+      const head = $('kitchenHead');
+      if (head) {
+        if (filterKitchen === 'all') {
+          head.innerHTML = '';
+        } else {
+          const k = kitchens.find(x => x.id === filterKitchen);
+          const revs = (reviews||[]).filter(r => r.kitchenId === filterKitchen);
+          head.innerHTML = k ? `<div class="kitchen-head">
+            <h3>${esc(k.name)} · ★ ${k.rating||'—'}</h3>
+            <div class="meta">${esc(k.description||'')}</div>
+            <div class="meta" style="margin-top:4px">${esc((k.cuisineTypes||[]).join(' · '))} · мин. ${fmt(k.minOrder||30000)} сум</div>
+            <div class="rev">
+              <b style="font-size:.85rem">Отзывы</b>
+              ${revs.length ? revs.map(r => `<div class="review" style="margin-top:6px"><b>★ ${r.rating} · ${esc(r.author)}</b><br>${esc(r.text)}</div>`).join('')
+                : '<div class="meta" style="margin-top:6px">Пока нет отзывов</div>'}
+            </div>
+          </div>` : '';
+        }
+      }
+      let list=filterKitchen==='all'?menu:menu.filter(m=>m.kitchenId===filterKitchen);
+      list=list.filter(matchCat);
+      if(maxKcal>0) list=list.filter(d=>Number(d.calories||0)<=maxKcal);
+      if(searchQ)list=list.filter(d=>(d.name+' '+(d.description||'')+' '+(d.category||'')).toLowerCase().includes(searchQ));
+      $('menuList').innerHTML=list.map(d=>dishCard(d)).join('')||'<div class="empty">Блюд не найдено</div>';
+    }
+
+    function renderOrderKitchenSelect(){
+      let list=kitchens;
+      if(isPartner()&&user.kitchenId)list=kitchens.filter(k=>k.id===user.kitchenId);
+      $('orderKitchen').innerHTML=list.map(k=>`<option value="${k.id}">${esc(k.name)}</option>`).join('');
+    }
+
+    function changeQty(id,d){
+      qtyMap[id]=Math.max(0,(qtyMap[id]||0)+d);
+      if(!qtyMap[id])delete qtyMap[id];
+      renderCartDishes();
+    }
+
+    function renderCartDishes(){
+      const kid=$('orderKitchen').value;
+      const list=menu.filter(m=>m.kitchenId===kid);
+      // keep only current kitchen
+      Object.keys(qtyMap).forEach(id=>{
+        const m=menu.find(x=>x.id===id);
+        if(m&&m.kitchenId!==kid)delete qtyMap[id];
+      });
+      const chosen=list.filter(d=>(qtyMap[d.id]||0)>0);
+      $('orderDishes').innerHTML=chosen.length?chosen.map(d=>`
+        <div class="row">
+          <div class="thumb" style="background-image:url('${dishImg(d.id)}');background-size:cover;background-position:center"></div>
+          <div>
+            <b>${esc(d.name)}</b>
+            <div class="meta">${fmt(d.price)} сум · ${d.calories||0} ккал</div>
+          </div>
+          <div class="qty">
+            <button onclick="changeQty('${d.id}',-1)">−</button>
+            <span>${qtyMap[d.id]}</span>
+            <button onclick="changeQty('${d.id}',1)">+</button>
+          </div>
+        </div>`).join('') : `<div class="empty-cart">
+          <div class="big">🛒</div>
+          <strong>Корзина пуста</strong>
+          <div class="meta" style="margin:8px 0 14px">Добавьте блюда из меню или соберите рацион</div>
+          <button class="btn btn-main" style="width:auto;display:inline-block;padding:10px 18px" onclick="tab('menu')">В меню</button>
+          <button class="btn btn-ghost" style="width:auto;display:inline-block;padding:10px 18px;margin-left:6px" onclick="tab('ctor')">Конструктор</button>
+        </div>`;
+      updateCartBar();
+    }
+
+    function updateCartBar(){
+      let sub=0,count=0,kcal=0,p=0,f=0,c=0;
+      Object.keys(qtyMap).forEach(id=>{
+        const d=menu.find(m=>m.id===id);
+        if(!d)return;
+        const q=qtyMap[id]||0;
+        sub+=q*Number(d.price); count+=q;
+        kcal+=q*Number(d.calories||0);
+        p+=q*Number(d.proteins||0);
+        f+=q*Number(d.fats||0);
+        c+=q*Number(d.carbs||0);
+      });
+      const del=count?15000:0;
+      const promo=($('orderPromo')?.value||'').trim().toUpperCase();
+      const discount = promo==='HOMEFOOD10' ? Math.round(sub*0.1) : 0;
+      if($('cartSub')) $('cartSub').textContent=fmt(sub)+' сум';
+      if($('cartDel')) $('cartDel').textContent=fmt(del)+' сум';
+      if($('cartDiscount')) $('cartDiscount').textContent=(discount?('-'+fmt(discount)):'0')+' сум';
+      if($('cartSum')) $('cartSum').textContent=fmt(sub+del-discount)+' сум';
+      if($('cartKcal')) $('cartKcal').textContent=Math.round(kcal)+' ккал';
+      if($('cartP')) $('cartP').textContent='Б '+Math.round(p)+' г';
+      if($('cartF')) $('cartF').textContent='Ж '+Math.round(f)+' г';
+      if($('cartC')) $('cartC').textContent='У '+Math.round(c)+' г';
+      $('cartBarCount').textContent=count+' товар(а)';
+      $('cartBarSum').textContent=fmt(sub+del)+' сум';
+      const onShop = $('p-home')?.classList.contains('active') || $('p-menu')?.classList.contains('active');
+      if(count>0 && onShop && (isClient()||isAdmin())) $('cartBar').classList.add('show');
+      else $('cartBar').classList.remove('show');
+    }
+
+    async function submitOrder(){
+      if(!isClient()&&!isAdmin())return toast('Нужен аккаунт клиента');
+      const kid=$('orderKitchen').value;
+      const kit=kitchens.find(k=>k.id===kid)||{id:kid,name:'Kitchen'};
+      const items=menu.filter(m=>(qtyMap[m.id]||0)>0 && m.kitchenId===kid)
+        .map(d=>({dishId:d.id,name:d.name,price:Number(d.price),quantity:qtyMap[d.id]}));
+      if(!items.length)return toast('Корзина пуста');
+      try{
+        let sub=0,kcal=0,p=0,f=0,c=0;
+        items.forEach(it=>{
+          const d=menu.find(m=>m.id===it.dishId);
+          sub+=it.price*it.quantity;
+          if(d){kcal+=it.quantity*Number(d.calories||0);p+=it.quantity*Number(d.proteins||0);f+=it.quantity*Number(d.fats||0);c+=it.quantity*Number(d.carbs||0)}
+        });
+        const minOrder = (kitchens.find(k=>k.id===kit.id)||{}).minOrder||30000;
+        if(sub<minOrder) return toast('Мин. сумма кухни: '+fmt(minOrder)+' сум');
+        const r=await fetch(API+'/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+          kitchenId:kit.id,kitchenName:kit.name,
+          clientName:$('orderName').value||user.name,
+          clientPhone:$('orderPhone').value||user.phone,
+          items,
+          deliveryAddress:$('orderAddress').value||'',
+          timeSlot: $('orderSlot')?.value || '',
+          promoCode: $('orderPromo')?.value || '',
+          comment:$('orderComment').value||'',
+          nutrition: { calories:kcal, proteins:p, fats:f, carbs:c }
+        })});
+        if(!r.ok)throw new Error((await r.json()).message||'Ошибка');
+        const o=await r.json();
+        lastOrderId=o.id; localStorage.setItem('hf_last_order',o.id);
+        qtyMap={}; updateCartBar();
+        toast('Заказ '+o.orderNumber);
+        tab('track'); loadTrack();
+      }catch(e){toast(e.message)}
+    }
+
+    function timeline(s){
+      const idx=Math.max(0,STATUS_FLOW.indexOf(s));
+      return `<div class="timeline">${STATUS_FLOW.map((_,i)=>`<div class="tl ${i<=idx?'on':''}"></div>`).join('')}</div>`;
+    }
+
+    function statusLabel(s){
+      const m={pending:'Принят',confirmed:'Подтверждён',cooking:'Готовится',ready:'Готов',delivering:'В пути',delivered:'Доставлен'};
+      return m[s]||s;
+    }
+    function trackSteps(status){
+      const flow=['pending','confirmed','cooking','ready','delivering','delivered'];
+      const labels=['Заказ','Подтверждён','Готовится','Готов','В пути','Доставлен'];
+      const idx=Math.max(0,flow.indexOf(status));
+      return `<div class="steps-row">${labels.map((l,i)=>`<span class="${i<=idx?'on':''}">${l}</span>`).join('')}</div>
+        <div class="timeline">${flow.map((_,i)=>`<div class="tl ${i<=idx?'on':''}"></div>`).join('')}</div>`;
+    }
+    function mapForOrder(o){
+      // Tashkent center + slight offset by status for "tracking"
+      const flow=['pending','confirmed','cooking','ready','delivering','delivered'];
+      const i=Math.max(0,flow.indexOf(o.status));
+      const lat = 41.2995 + i * 0.003;
+      const lon = 69.2401 + i * 0.004;
+      const caption = o.status==='delivered' ? 'Доставлено' :
+        o.status==='delivering' ? 'Курьер в пути' :
+        o.status==='cooking' || o.status==='ready' ? 'Кухня готовит' : 'Ожидает кухню';
+      const src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon-0.02}%2C${lat-0.015}%2C${lon+0.02}%2C${lat+0.015}&layer=mapnik&marker=${lat}%2C${lon}`;
+      return `<div class="map-box"><iframe loading="lazy" src="${src}"></iframe><div class="map-caption">${caption}</div></div>`;
+    }
+    function orderCard(o, manage){
+      const kit = kitchens.find(k=>k.id===o.kitchenId);
+      const comm = o.platformFee != null ? o.platformFee : Math.round((o.subtotal||0)*((o.commissionRate||kit?.commissionRate||18)/100));
+      return `<article class="order-pretty">
+        <div class="head">
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+            <div>
+              <b style="font-size:1.05rem">${esc(o.orderNumber)}</b>
+              <div class="meta">${esc(o.kitchenName)} · ${esc(o.timeSlot||'Как можно скорее')}</div>
+            </div>
+            <span class="status ${o.status}">${statusLabel(o.status)}</span>
+          </div>
+          ${trackSteps(o.status)}
+        </div>
+        <div class="body">
+          ${mapForOrder(o)}
+          <div class="meta">${esc(o.clientName)} · ${esc(o.clientPhone)}</div>
+          <div class="meta" style="margin-top:4px">📍 ${esc(o.deliveryAddress||'Адрес не указан')}</div>
+          <ul style="margin:8px 0 0 16px;font-size:.84rem;color:var(--muted)">
+            ${(o.items||[]).map(i=>'<li>'+esc(i.name)+' × '+i.quantity+'</li>').join('')}
+          </ul>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px">
+            <div>
+              <b style="font-size:1.1rem">${fmt(o.totalAmount)} сум</b>
+              ${o.discount?`<div class="meta">Скидка ${fmt(o.discount)} сум</div>`:''}
+              ${isAdmin()?`<div class="meta">Комиссия платформы: ${fmt(comm)} сум (${o.commissionRate||kit?.commissionRate||18}%)</div>`:''}
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              ${o.paymentStatus==='paid'?`<span style="color:var(--green);font-weight:700;font-size:.8rem">✓ ${esc(o.paymentMethod||'paid')}</span>`
+                :(isClient()||isAdmin()?`<button class="btn btn-sm btn-main" style="width:auto" onclick="payOrder('${o.id}')">Оплатить</button>`:'')}
+              ${(isClient()||isAdmin())?`<button class="btn btn-sm btn-ghost" onclick='reorder(${JSON.stringify(o.items||[])}, ${JSON.stringify(o.kitchenId)})'>Повторить</button>`:''}
+            </div>
+          </div>
+          ${manage?`<div class="actions">
+            <button class="btn btn-sm btn-ghost" onclick="setStatus('${o.id}','confirmed')">Принять</button>
+            <button class="btn btn-sm btn-ghost" onclick="setStatus('${o.id}','cooking')">Готовится</button>
+            <button class="btn btn-sm btn-ghost" onclick="setStatus('${o.id}','ready')">Готов</button>
+            <button class="btn btn-sm btn-ghost" onclick="setStatus('${o.id}','delivering')">В пути</button>
+            <button class="btn btn-sm btn-dark" onclick="setStatus('${o.id}','delivered')">Доставлен</button>
+            <button class="btn btn-sm btn-ghost" onclick="notifyKitchen('${o.orderNumber}')">Telegram</button>
+          </div>`:''}
+        </div>
+      </article>`;
+    }
+
+
+    async function loadOrders(){
+      try{
+        let orders=await(await fetch(API+'/orders')).json();
+        if(isPartner()&&user.kitchenId)orders=orders.filter(o=>o.kitchenId===user.kitchenId);
+        if(isClient())orders=orders.filter(o=>o.clientPhone===user.phone);
+        const pending=orders.filter(o=>o.status==='pending').length;
+        if(isPartner()||isAdmin())buildNav(pending);
+        const manage=isPartner()||isAdmin();
+        $('ordersList').innerHTML=orders.length?orders.map(o=>orderCard(o,manage)).join('')
+          :'<div class="empty">Заказов нет</div>';
+      }catch{toast('Ошибка заказов')}
+    }
+
+    async function loadTrack(){
+      if(!isClient()&&!isAdmin())return;
+      try{
+        let orders=await(await fetch(API+'/orders')).json();
+        const mine=orders.filter(o=>o.clientPhone===user.phone);
+        const active=mine.find(o=>o.id===lastOrderId)||mine.find(o=>o.status!=='delivered')||mine[0];
+        $('trackBox').innerHTML=active?orderCard(active,false):'<div class="empty">Нет активного заказа</div>';
+        $('myOrdersList').innerHTML=mine.length?mine.map(o=>orderCard(o,false)).join(''):'';
+      }catch{}
+    }
+
+    
+    function scorePackage(items, targetKcal, targetProt) {
+      const kcal = items.reduce((s,d)=>s+Number(d.calories||0),0);
+      const prot = items.reduce((s,d)=>s+Number(d.proteins||0),0);
+      const kcalDiff = Math.abs(kcal - targetKcal);
+      const protDiff = Math.max(0, targetProt - prot);
+      return kcalDiff + protDiff * 3;
+    }
+
+    function pickMeal(pool, targetKcal) {
+      if (!pool.length) return null;
+      let best = pool[0], bestDiff = Infinity;
+      for (const d of pool) {
+        const diff = Math.abs(Number(d.calories||0) - targetKcal);
+        if (diff < bestDiff) { bestDiff = diff; best = d; }
+      }
+      return best;
+    }
+
+    function buildRation() {
+      const targetKcal = Number($('ctorKcal').value) || 1800;
+      const targetProt = Number($('ctorProt').value) || 100;
+      const mode = $('ctorMode').value;
+      const tag = ($('ctorTag').value || '').toLowerCase();
+      let pool = menu.filter(m => m.isAvailable !== false);
+      if (tag) pool = pool.filter(d => ((d.tags||[]).join(' ')+' '+(d.category||'')).toLowerCase().includes(tag));
+      const excludes = [...document.querySelectorAll('#ctorExclude input:checked')].map(x=>x.value);
+      if (excludes.length) {
+        pool = pool.filter(d => {
+          const bag = (d.name+' '+d.description+' '+(d.tags||[]).join(' ')).toLowerCase();
+          if (excludes.includes('рыба') && /рыб|лосос|тунец|семг/.test(bag)) return false;
+          if (excludes.includes('молоко') && /творож|йогурт|каймок|сыр|молоч/.test(bag)) return false;
+          if (excludes.includes('острое') && /остр|перец|лагман/.test(bag)) return false;
+          if (excludes.includes('свинина') && /свинин/.test(bag)) return false;
+          if (excludes.includes('глютен') && /тост|лепёш|самса|панкейк|лапш|манты/.test(bag)) return false;
+          return true;
+        });
+      }
+
+      const byKit = {};
+      pool.forEach(d => {
+        if (!byKit[d.kitchenId]) byKit[d.kitchenId] = [];
+        byKit[d.kitchenId].push(d);
+      });
+
+      const packages = [];
+      for (const [kid, dishes] of Object.entries(byKit)) {
+        const kit = kitchens.find(k => k.id === kid) || { id: kid, name: kid };
+        let items = [];
+        if (mode === 'meal') {
+          const one = pickMeal(dishes, targetKcal);
+          if (one) items = [one];
+        } else {
+          const b = pickMeal(dishes.filter(d => (d.category||'')==='Завтрак' || (d.tags||[]).includes('завтрак')), targetKcal * 0.28)
+                 || pickMeal(dishes, targetKcal * 0.28);
+          const l = pickMeal(dishes.filter(d => (d.category||'')==='Обед'), targetKcal * 0.4)
+                 || pickMeal(dishes.filter(d => d.id !== (b&&b.id)), targetKcal * 0.4);
+          const u = pickMeal(dishes.filter(d => (d.category||'')==='Ужин' || (d.category||'')==='Обед'), targetKcal * 0.32)
+                 || pickMeal(dishes.filter(d => d.id !== (b&&b.id) && d.id !== (l&&l.id)), targetKcal * 0.32);
+          items = [b,l,u].filter(Boolean);
+          // unique
+          const seen = new Set();
+          items = items.filter(d => { if (seen.has(d.id)) return false; seen.add(d.id); return true; });
+        }
+        if (!items.length) continue;
+        const kcal = items.reduce((s,d)=>s+Number(d.calories||0),0);
+        const prot = items.reduce((s,d)=>s+Number(d.proteins||0),0);
+        const price = items.reduce((s,d)=>s+Number(d.price||0),0);
+        packages.push({
+          kitchen: kit,
+          items,
+          kcal, prot, price,
+          score: scorePackage(items, mode==='meal'?targetKcal:targetKcal, targetProt)
+        });
+      }
+      packages.sort((a,b)=>a.score-b.score);
+      if (mode === 'week') {
+        packages.forEach(p => {
+          p.weekNote = 'Оценка на 5 дней (×5 к этому дню)';
+          p.kcal = p.kcal * 5;
+          p.prot = p.prot * 5;
+          p.price = p.price * 5;
+        });
+      }
+      renderCtorResults(packages.slice(0,6), mode==='week'?targetKcal*5:targetKcal, mode==='week'?targetProt*5:targetProt, mode);
+    }
+
+    function renderCtorResults(packages, targetKcal, targetProt, mode) {
+      const el = $('ctorResults');
+      if (!packages.length) {
+        el.innerHTML = '<div class="empty">Не нашли подходящий набор. Смягчите фильтры.</div>';
+        return;
+      }
+      el.innerHTML = packages.map((p, idx) => {
+        const kcalOk = Math.abs(p.kcal - (mode==='meal'?targetKcal:targetKcal)) <= (mode==='meal'?80:200);
+        const protOk = p.prot >= targetProt * 0.85;
+        return `<div class="ctor-card">
+          <h4>${esc(p.kitchen.name)} ${idx===0?'· лучший вариант':''}</h4>
+          <div class="nutri">
+            <span>${p.kcal} ккал</span>
+            <span>Б ${p.prot} г</span>
+            <span>${fmt(p.price)} сум</span>
+          </div>
+          <div class="diff ${kcalOk&&protOk?'ok':''}">
+            Цель: ${mode==='meal'?targetKcal:targetKcal} ккал / ${targetProt} г белка
+            ${kcalOk&&protOk?' · близко к цели':''}
+          </div>
+          <div class="ctor-meals">
+            ${p.items.map(d => `
+              <div class="ctor-meal">
+                <img src="${dishImg(d.id)}" onerror="this.src='${FALLBACK}'" />
+                <div>
+                  <b style="font-size:.85rem">${esc(d.name)}</b>
+                  <div class="meta">${esc(d.category||'')} · ${d.calories} ккал · Б${d.proteins}</div>
+                </div>
+                <div class="meta">${fmt(d.price)}</div>
+              </div>`).join('')}
+          </div>
+          <button class="btn btn-main" onclick='orderPackage(${JSON.stringify(p.items.map(d=>d.id))}, ${JSON.stringify(p.kitchen.id)})'>
+            Заказать этот набор
+          </button>
+        </div>`;
+      }).join('');
+    }
+
+    function orderPackage(ids, kitchenId) {
+      qtyMap = {};
+      ids.forEach(id => { qtyMap[id] = (qtyMap[id]||0) + 1; });
+      if ($('orderKitchen')) {
+        $('orderKitchen').value = kitchenId;
+      }
+      renderOrderKitchenSelect();
+      if ($('orderKitchen')) $('orderKitchen').value = kitchenId;
+      renderCartDishes();
+      toast('Набор в корзине');
+      tab('cart');
+    }
+
+
+    
+    function reorder(items, kitchenId){
+      qtyMap = {};
+      (items||[]).forEach(it => { qtyMap[it.dishId] = (qtyMap[it.dishId]||0) + (it.quantity||1); });
+      renderOrderKitchenSelect();
+      if ($('orderKitchen')) $('orderKitchen').value = kitchenId;
+      renderCartDishes();
+      toast('Повторили заказ');
+      tab('cart');
+    }
+    function notifyKitchen(orderNumber){
+      const msg = encodeURIComponent('Новый заказ HomeFood: '+orderNumber);
+      window.open('https://t.me/share/url?url=&text='+msg, '_blank');
+      toast('Откройте Telegram');
+    }
+    async function submitPartner(){
+      const kitchenName=$('paKitchen').value.trim();
+      const phone=$('paPhone').value.trim()||user?.phone||'';
+      if(!kitchenName||!phone) return toast('Укажите кухню и телефон');
+      try{
+        const r=await fetch(API+'/partners/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+          name:user?.name||'', phone, kitchenName, comment:$('paComment').value||''
+        })});
+        if(!r.ok) throw new Error('Ошибка');
+        toast('Заявка отправлена');
+        $('paKitchen').value=''; $('paComment').value='';
+      }catch(e){toast(e.message)}
+    }
+    function openPay(id){
+      $('payModal').innerHTML = `<div class="modal" onclick="event.stopPropagation()">
+        <h3>Оплата заказа</h3>
+        <p class="meta" style="margin:8px 0 4px">Демо-режим: как Click / Payme. Реальный эквайринг подключается по договору с провайдером.</p>
+        <div class="pay-methods">
+          <button onclick="payOrder('${id}','click')"><span>Click</span><small>Карта / Click</small></button>
+          <button onclick="payOrder('${id}','payme')"><span>Payme</span><small>Карта / Payme</small></button>
+          <button onclick="payOrder('${id}','cash')"><span>Наличные</span><small>Курьеру при получении</small></button>
+        </div>
+        <button class="btn btn-ghost" style="width:100%" onclick="closePay()">Отмена</button>
+      </div>`;
+      $('payModal').classList.add('show');
+    }
+    function closePay(){ $('payModal').classList.remove('show'); $('payModal').innerHTML=''; }
+    async function payOrder(id, method){
+      try{
+        const r=await fetch(API+'/orders/'+id+'/pay',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ method: method || 'click' })
+        });
+        if(!r.ok)throw new Error('err');
+        closePay();
+        const names = {click:'Click', payme:'Payme', cash:'Наличные'};
+        toast('Оплачено · ' + (names[method]||method));
+        loadOrders(); loadTrack();
+      }catch{toast('Ошибка оплаты')}
+    }
+
+    async function setStatus(id,status){
+      try{
+        const r=await fetch(API+'/orders/'+id+'/status',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
+        if(!r.ok)throw new Error('err');
+        toast(status); loadOrders(); loadTrack();
+      }catch{toast('Ошибка')}
+    }
+
+    (async function init(){
+      const s=localStorage.getItem('hf_user');
+      if(s){try{user=JSON.parse(s);await boot()}catch{}}
+      else $('loginPhone').value='+998903333333';
+    })();
+  </script>
+</body>
+</html>
