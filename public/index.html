@@ -398,7 +398,7 @@
   <div id="view-login" class="login-page">
     <div class="login-hero">
       <div class="brand">Home<span>Food</span></div>
-      <h1>Домашняя еда и ПП без лишней суеты</h1>
+      <h1>Домашняя еда рядом — просто и по делу</h1>
       <p>Кухни рядом, прозрачный состав и заказ за минуту.</p>
       <div class="steps">
         <div>1. Выберите кухню или соберите рацион</div>
@@ -439,7 +439,7 @@
     <div class="top">
       <div class="top-row">
         <div class="logo">Home<span>Food</span></div>
-        <div class="addr">Доставка · <b>Ташкент</b></div>
+        <div class="addr">Доставка по <b>Ташкенту</b></div>
         <div class="top-actions">
           <button class="icon-btn" id="btnCtorTop" onclick="tab('ctor')" title="Конструктор" style="width:auto;padding:0 12px;font-size:0.75rem;font-weight:800">Рацион</button>
           <div class="user-mini" id="userChip">—</div>
@@ -448,7 +448,7 @@
       </div>
       <div class="search-bar">
         <span>🔍</span>
-        <input id="globalSearch" placeholder="Блюдо, кухня или кухня ПП" oninput="onSearch()" />
+        <input id="globalSearch" placeholder="Найти блюдо или кухню" oninput="onSearch()" />
       </div>
     </div>
 
@@ -513,7 +513,7 @@
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
             <b>Итого</b><b id="cartSum" style="font-size:1.15rem">0 сум</b>
           </div>
-          <button class="btn btn-main" onclick="submitOrder()">Оформить заказ</button>
+          <button class="btn btn-main" onclick="submitOrder()">Оформить</button>
         </div>
       </div>
 
@@ -562,8 +562,8 @@
               <option value="спорт">Спорт</option>
             </select>
           </div>
-          <button class="btn btn-main" onclick="buildRation()">Подобрать рацион</button>
-          <div class="meta" style="margin-top:10px">Идеи могут быть из разных кухонь. Заказ — только из одной кухни за раз.</div>
+          <button class="btn btn-main" onclick="buildRation()">Подобрать</button>
+          <div class="meta" style="margin-top:10px">Подберём варианты с каждой кухни. В заказ попадёт набор с одной кухни.</div>
         </div>
         <div class="ctor-grid" id="ctorResults"></div>
       </div>
@@ -591,7 +591,7 @@
         <div class="box">
           <b>Служба поддержки</b>
           <div class="meta" style="margin:8px 0 12px">Помощь по заказам и приложению</div>
-          <button class="btn btn-ghost btn-sm" onclick="openSupport()">Написать в поддержку</button>
+          <button class="btn btn-ghost btn-sm" onclick="openSupport()">Поддержка</button>
         </div>
         <div class="box" id="partnerApplyBox">
           <b>Стать кухней-партнёром</b>
@@ -599,9 +599,9 @@
           <div class="field"><label>Название кухни</label><input id="paKitchen" placeholder="Моя домашняя кухня" /></div>
           <div class="field"><label>Телефон</label><input id="paPhone" placeholder="+998..." /></div>
           <div class="field"><label>Комментарий</label><input id="paComment" placeholder="Район, специализация" /></div>
-          <button class="btn btn-main" onclick="submitPartner()">Отправить заявку</button>
+          <button class="btn btn-main" onclick="submitPartner()">Отправить</button>
         </div>
-        <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="logout()">Выйти из аккаунта</button>
+        <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="logout()">Выйти</button>
       </div>
     </div>
   </div>
@@ -640,7 +640,9 @@
       'd-017':'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=900&q=80',
       'd-018':'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=900&q=80',
       'd-019':'https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&w=900&q=80',
-      'd-020':'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=80'
+      'd-020':'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=80',
+      'd-021':'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80',
+      'd-022':'https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=900&q=80'
     };
     const KITCHEN_IMG = {
       'kit-001':'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=900&q=80',
@@ -1007,8 +1009,8 @@ function renderKitFilters(){
           </div>
         </div>`).join('') : `<div class="empty-cart">
           <div class="big">🛒</div>
-          <strong>Корзина пуста</strong>
-          <div class="meta" style="margin:8px 0 14px">Добавьте блюда из меню или соберите рацион</div>
+          <strong>Корзина пока пустая</strong>
+          <div class="meta" style="margin:8px 0 14px">Выберите блюда или соберите рацион под ваши ккал</div>
           <button class="btn btn-main" style="width:auto;display:inline-block;padding:10px 18px" onclick="tab('menu')">В меню</button>
           <button class="btn btn-ghost" style="width:auto;display:inline-block;padding:10px 18px;margin-left:6px" onclick="tab('ctor')">Конструктор</button>
         </div>`;
@@ -1045,7 +1047,9 @@ function renderKitFilters(){
       else $('cartBar').classList.remove('show');
     }
 
+    let orderSubmitting=false;
     async function submitOrder(){
+      if(orderSubmitting)return;
       if(!isClient()&&!isAdmin())return toast('Нужен аккаунт клиента');
       const kid=$('orderKitchen').value;
       const kit=kitchens.find(k=>k.id===kid)||{id:kid,name:'Kitchen'};
@@ -1061,6 +1065,7 @@ function renderKitFilters(){
         });
         const minOrder = (kitchens.find(k=>k.id===kit.id)||{}).minOrder||30000;
         if(sub<minOrder) return toast('Мин. сумма кухни: '+fmt(minOrder)+' сум');
+        orderSubmitting=true;
         const r=await fetch(API+'/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
           kitchenId:kit.id,kitchenName:kit.name,
           clientName:$('orderName').value||user.name,
@@ -1079,6 +1084,7 @@ function renderKitFilters(){
         toast('Заказ '+o.orderNumber);
         tab('track'); loadTrack();
       }catch(e){toast(e.message)}
+      finally{orderSubmitting=false}
     }
 
     function timeline(s){
@@ -1175,7 +1181,11 @@ function renderKitFilters(){
         const mine=orders.filter(o=>o.clientPhone===user.phone);
         const active=mine.find(o=>o.id===lastOrderId)||mine.find(o=>o.status!=='delivered')||mine[0];
         $('trackBox').innerHTML=active?orderCard(active,false):'<div class="empty">Нет активного заказа</div>';
-        $('myOrdersList').innerHTML=mine.length?mine.map(o=>orderCard(o,false)).join(''):'';
+        // остальные заказы — без активного, чтобы не двоился
+        const rest=mine.filter(o=>!active||o.id!==active.id);
+        $('myOrdersList').innerHTML=rest.length
+          ? ('<div class="sec-title" style="margin-top:8px">История</div>'+rest.map(o=>orderCard(o,false)).join(''))
+          : '';
       }catch{}
     }
 
@@ -1349,7 +1359,7 @@ function renderKitFilters(){
     function openPay(id){
       $('payModal').innerHTML = `<div class="modal" onclick="event.stopPropagation()">
         <h3>Оплата заказа</h3>
-        <p class="meta" style="margin:8px 0 4px">Демо-режим: как Click / Payme. Реальный эквайринг подключается по договору с провайдером.</p>
+        <p class="meta" style="margin:8px 0 4px">Демо: Click, Payme или наличные. Боевая оплата — после подключения провайдера.</p>
         <div class="pay-methods">
           <button onclick="payOrder('${id}','click')"><span>Click</span><small>Карта / Click</small></button>
           <button onclick="payOrder('${id}','payme')"><span>Payme</span><small>Карта / Payme</small></button>
