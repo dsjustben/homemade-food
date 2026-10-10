@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>HomeFood</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg: #f3f2ef;
@@ -19,6 +19,17 @@
       --red: #e03e3e;
       --shadow: 0 8px 28px rgba(26,25,24,.08);
       --radius: 18px;
+      --drawer: #fff;
+    }
+    [data-theme="dark"] {
+      --bg: #121212;
+      --surface: #1e1e1e;
+      --text: #f2f2f2;
+      --muted: #a0a0a0;
+      --line: #2c2c2c;
+      --black: #f2f2f2;
+      --shadow: 0 8px 28px rgba(0,0,0,.45);
+      --drawer: #1a1a1a;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -26,15 +37,42 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding-bottom: 100px;
+      padding-bottom: 90px;
       -webkit-font-smoothing: antialiased;
+      transition: background .25s ease, color .25s ease;
     }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slideDrawer {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    @keyframes softPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+    .panel { animation: fadeUp .4s ease both; }
+    .icon-btn, .chip-btn, .fab-menu, .drawer-item, .plus, .nav-item {
+      transition: transform .2s cubic-bezier(.34,1.56,.64,1), background .2s ease, box-shadow .2s ease;
+    }
+    .icon-btn:hover, .chip-btn:hover, .drawer-item:hover, .plus:hover {
+      transform: scale(1.12);
+    }
+    .fab-menu:hover { transform: scale(1.1); }
+    .card:hover { transform: translateY(-3px) scale(1.01); }
+    .btn:hover { filter: brightness(1.03); }
     button, input, select { font-family: inherit; }
 
     /* Top like Yandex */
     .top {
       position: sticky; top: 0; z-index: 50;
-      background: rgba(255,255,255,.92);
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--line);
@@ -114,11 +152,16 @@
 
     /* Cards */
     .card {
-      background: #fff; border-radius: 18px; overflow: hidden;
+      background: var(--surface); border-radius: 18px; overflow: hidden;
       box-shadow: 0 2px 10px rgba(26,25,24,.05);
-      border: 1px solid rgba(0,0,0,.03);
-      transition: transform .15s ease;
+      border: 1px solid var(--line);
+      transition: transform .2s ease, box-shadow .2s ease;
+      animation: fadeUp .45s cubic-bezier(.22,1,.36,1) both;
     }
+    .card:nth-child(2) { animation-delay: .04s; }
+    .card:nth-child(3) { animation-delay: .08s; }
+    .card:nth-child(4) { animation-delay: .12s; }
+    .card:hover { box-shadow: var(--shadow); }
     .card:active { transform: scale(0.98); }
     .card-img {
       height: 130px; background-size: cover; background-position: center;
@@ -203,6 +246,24 @@
       border-radius: 12px; padding: 10px 12px; font-size: .82rem;
     }
     .login-box { padding: 22px 18px 36px; max-width: 420px; margin: 0 auto; width: 100%; }
+    .welcome-quote {
+      text-align: center; margin: 0 0 18px;
+      padding: 18px 16px;
+      background: linear-gradient(135deg, rgba(255,204,0,.12), rgba(10,159,74,.08));
+      border-radius: 18px; border: 1px solid var(--line);
+      animation: fadeUp .6s ease both;
+    }
+    .welcome-quote p {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 1.15rem; font-weight: 600; line-height: 1.45;
+      color: var(--text); letter-spacing: -0.01em;
+    }
+    .welcome-quote span {
+      display: block; margin-top: 8px;
+      font-family: Inter, sans-serif; font-size: .75rem;
+      font-weight: 600; color: var(--muted); letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
     .login-box h2 { font-size: 1.3rem; margin-bottom: 6px; letter-spacing: -0.02em; }
     .login-box .sub { color: var(--muted); font-size: .88rem; margin-bottom: 14px; }
     .demo {
@@ -222,9 +283,25 @@
     .btn {
       border: none; cursor: pointer; border-radius: 14px;
       padding: 14px 16px; font-weight: 700; font-size: .9rem;
+      transition: transform .15s ease, opacity .15s ease, background .15s ease;
     }
-    .btn-main { background: var(--yellow); color: var(--black); width: 100%; box-shadow: 0 4px 14px rgba(255,204,0,.35); }
+    .btn:active { transform: scale(0.97); }
+    .btn-main { background: var(--yellow); color: #1a1918; width: 100%; box-shadow: 0 4px 14px rgba(255,204,0,.35); }
     .btn-main:active { background: var(--yellow-dark); }
+    .btn-forgot {
+      width: 100%; margin-top: 8px;
+      background: transparent; color: var(--green);
+      border: 1.5px solid rgba(10,159,74,.45);
+    }
+    .btn-forgot:hover { background: rgba(10,159,74,.08); }
+    .remember-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin: 10px 0 12px; font-size: .85rem;
+    }
+    .remember-row label {
+      display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--muted);
+    }
+    .remember-row input { width: 18px; height: 18px; accent-color: var(--green); }
     .btn-reg {
       width: 100%; margin-top: 8px; background: #fff; color: var(--green);
       border: 1.5px solid var(--green);
@@ -240,7 +317,7 @@
       backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       display: none; padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
     }
-    .bottom-nav.show { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
+    .bottom-nav.show { display: none !important; }
     .nav-item {
       border: none; background: transparent; padding: 8px 4px;
       font-size: 0.65rem; font-weight: 600; color: var(--muted); cursor: pointer;
@@ -303,12 +380,8 @@
     .review {
       background: #fff; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; font-size: .82rem;
     }
-    #toast {
-      position: fixed; left: 50%; bottom: 160px; transform: translateX(-50%);
-      background: #21201f; color: #fff; padding: 10px 14px; border-radius: 12px;
-      font-size: .85rem; font-weight: 600; z-index: 100; display: none; max-width: 90vw;
-    }
-    #toast.show { display: block; }
+    /* toast overridden below */
+    /* toast show overridden */
     
     .kcal-filter { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
     .kcal-filter button {
@@ -389,6 +462,116 @@
     }
     .pay-methods button:active { border-color:var(--black); background:#fafafa; }
     .pay-methods button small { font-weight:500; color:var(--muted); }
+    
+    .fab-menu {
+      position: fixed; right: 16px; bottom: 20px; z-index: 70;
+      width: 56px; height: 56px; border-radius: 50%; border: none;
+      background: var(--yellow); color: #1a1918; font-size: 1.4rem; font-weight: 800;
+      box-shadow: 0 8px 24px rgba(0,0,0,.2); cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      transition: transform .2s ease;
+    }
+    .fab-menu.show { display: flex; }
+    .fab-menu:active { transform: scale(0.94); }
+    .drawer-bg {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 80;
+      display: none; opacity: 0; transition: opacity .2s ease;
+    }
+    .drawer-bg.show { display: block; opacity: 1; }
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; width: min(320px, 88vw);
+      background: var(--drawer); z-index: 81; padding: 20px 16px;
+      box-shadow: -8px 0 32px rgba(0,0,0,.2);
+      transform: translateX(100%); transition: transform .25s ease;
+      overflow-y: auto;
+    }
+    .drawer-bg.show .drawer { transform: translateX(0); animation: slideDrawer .25s ease; }
+    .drawer h3 { font-size: 1.1rem; margin-bottom: 14px; }
+    .drawer-item {
+      width: 100%; text-align: left; border: none; background: transparent;
+      padding: 14px 12px; border-radius: 12px; font-weight: 700; font-size: .95rem;
+      color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 10px;
+      transition: background .15s ease;
+    }
+    .drawer-item:hover { background: var(--bg); }
+    .drawer-item .badge-n {
+      margin-left: auto; background: var(--red); color: #fff; border-radius: 999px;
+      min-width: 20px; height: 20px; font-size: .7rem; display: flex; align-items: center; justify-content: center;
+      padding: 0 6px;
+    }
+    .lang-theme {
+      display: flex; gap: 6px; align-items: center;
+    }
+    .chip-btn {
+      border: 1px solid var(--line); background: var(--bg); color: var(--text);
+      border-radius: 10px; padding: 8px 10px; font-size: .75rem; font-weight: 700; cursor: pointer;
+    }
+    .chip-btn.active { background: var(--black); color: var(--surface); border-color: var(--black); }
+    [data-theme="dark"] .chip-btn.active { background: #ffcc00; color: #1a1918; border-color: #ffcc00; }
+    [data-theme="dark"] .logo span { color: #1a1918; }
+    [data-theme="dark"] .btn-main { color: #1a1918; }
+    [data-theme="dark"] .box, [data-theme="dark"] .order-pretty, [data-theme="dark"] .empty, [data-theme="dark"] .empty-cart {
+      background: var(--surface);
+    }
+
+    
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    @media (min-width: 640px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+    }
+    .card-img { height: 180px !important; }
+    @media (min-width: 640px) {
+      .card-img { height: 150px !important; }
+    }
+    .h-scroll .card { min-width: 200px; }
+    .h-scroll .card-img { height: 140px !important; }
+    .kit-accent-kit-001 { box-shadow: inset 0 3px 0 0 #0a9f4a; }
+    .kit-accent-kit-002 { box-shadow: inset 0 3px 0 0 #e8a317; }
+    .kit-accent-kit-003 { box-shadow: inset 0 3px 0 0 #3d9a6a; }
+    .kit-accent-kit-004 { box-shadow: inset 0 3px 0 0 #4a6cf7; }
+    .kit-accent-kit-005 { box-shadow: inset 0 3px 0 0 #c45c26; }
+    .skeleton {
+      background: linear-gradient(90deg, var(--line) 25%, var(--bg) 50%, var(--line) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite linear;
+      border-radius: 18px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skel-card { height: 260px; }
+    .skel-row { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 640px) {
+      .skel-row { grid-template-columns: 1fr 1fr; }
+    }
+    #toast {
+      position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%) translateY(20px);
+      background: #1a1918; color: #fff; padding: 12px 18px; border-radius: 14px;
+      font-weight: 600; font-size: .88rem; z-index: 100;
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s ease, transform .25s ease;
+      box-shadow: 0 8px 28px rgba(0,0,0,.25);
+      max-width: 90vw; text-align: center;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.ok::before { content: "✓ "; color: #6ddf9a; font-weight: 800; }
+    .refresh-btn {
+      border: 1px solid var(--line); background: var(--surface); color: var(--text);
+      border-radius: 12px; padding: 8px 12px; font-size: .78rem; font-weight: 700;
+      cursor: pointer; transition: transform .2s ease;
+    }
+    .refresh-btn:hover { transform: scale(1.06); }
+    .sec-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin: 8px 0 12px;
+    }
+    .sec-head .sec-title { margin: 0; }
+
     .hidden { display: none !important; }
     .actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   </style>
@@ -407,20 +590,15 @@
       </div>
     </div>
     <div class="login-box">
+      <div class="lang-theme" style="justify-content:flex-end;margin-bottom:10px">
+        <button class="chip-btn" id="btnLangLogin" onclick="toggleLang()">RU</button>
+        <button class="chip-btn" id="btnThemeLogin" onclick="toggleTheme()">🌙</button>
+      </div>
       <h2 id="authTitle">Вход</h2>
       <p class="sub" id="authSub">Введите номер телефона</p>
-      <div class="demo" id="demoBox">
-        <b>Вход по номеру · без пароля</b>
-        <div style="margin-top:6px">Клиент: <code>+998903333333</code></div>
-        <details>
-          <summary>Все тестовые аккаунты</summary>
-          Fast PP <code>+998902222222</code><br>
-          Mamochka <code>+998905555555</code><br>
-          Green Bowl <code>+998904444444</code><br>
-          Protein Lab <code>+998906666666</code><br>
-          Tashkent Home <code>+998907777777</code><br>
-          Админ <code>+998901111111</code>
-        </details>
+      <div class="welcome-quote" id="demoBox">
+        <p id="welcomeText">Еда — это забота. Пусть каждый приём пищи будет тёплым и настоящим.</p>
+        <span>HomeFood</span>
       </div>
       <div id="registerFields" class="hidden">
         <div class="field"><label>Имя</label><input id="regName" placeholder="Как вас зовут" /></div>
@@ -429,8 +607,12 @@
         <label>Номер телефона</label>
         <input id="loginPhone" placeholder="+998 90 123 45 67" inputmode="tel" />
       </div>
-      <button class="btn btn-main" id="btnAuthPrimary" onclick="doAuth()">Войти</button>
-      <button class="btn btn-reg" id="btnAuthSecondary" onclick="toggleAuthMode()">Регистрация</button>
+      <div class="remember-row" id="rememberRow">
+        <label><input type="checkbox" id="rememberMe" checked /> <span data-i18n="remember">Запомнить меня</span></label>
+      </div>
+      <button class="btn btn-main" id="btnAuthPrimary" onclick="doAuth()" data-i18n="login">Войти</button>
+      <button class="btn btn-reg" id="btnAuthSecondary" onclick="toggleAuthMode()" data-i18n="register">Регистрация</button>
+      <button class="btn btn-forgot" id="btnForgot" type="button" onclick="forgotPassword()" data-i18n="forgot">Забыли пароль?</button>
     </div>
   </div>
 
@@ -439,11 +621,14 @@
     <div class="top">
       <div class="top-row">
         <div class="logo">Home<span>Food</span></div>
-        <div class="addr">Доставка по <b>Ташкенту</b></div>
+        <div style="flex:1"></div>
         <div class="top-actions">
-          <button class="icon-btn" id="btnCtorTop" onclick="tab('ctor')" title="Конструктор" style="width:auto;padding:0 12px;font-size:0.75rem;font-weight:800">Рацион</button>
+          <div class="lang-theme">
+            <button class="chip-btn" id="btnLang" onclick="toggleLang()" title="Language">RU</button>
+            <button class="chip-btn" id="btnTheme" onclick="toggleTheme()" title="Theme">🌙</button>
+          </div>
+          <button class="icon-btn" id="btnCtorTop" onclick="tab('ctor')" title="Конструктор" style="width:auto;padding:0 12px;font-size:0.75rem;font-weight:800" data-i18n="ration">Рацион</button>
           <div class="user-mini" id="userChip">—</div>
-          <button class="icon-btn" onclick="logout()" title="Выйти">⎋</button>
         </div>
       </div>
       <div class="search-bar">
@@ -456,7 +641,10 @@
       <!-- HOME -->
       <div id="p-home" class="panel active">
         <div class="cats" id="cats"></div>
-        <div class="sec-title">Популярное</div>
+        <div class="sec-head">
+          <div class="sec-title">Популярное</div>
+          <button class="refresh-btn" onclick="refreshHome()">↻ Обновить</button>
+        </div>
         <div class="h-scroll" id="popularList"></div>
         <div class="sec-title">Кухни рядом</div>
         <div class="grid" id="kitchensList"></div>
@@ -614,44 +802,83 @@
   <nav class="bottom-nav" id="bottomNav"></nav>
   <div class="modal-bg" id="dishModal" onclick="closeDish()"></div>
   <div class="modal-bg" id="payModal" onclick="closePay()"></div>
+  <button class="fab-menu" id="fabMenu" onclick="openDrawer()" aria-label="Menu">☰</button>
+  <div class="drawer-bg" id="drawerBg" onclick="closeDrawer()">
+    <div class="drawer" id="drawer" onclick="event.stopPropagation()">
+      <h3 id="drawerTitle">Меню</h3>
+      <div id="drawerItems"></div>
+      <button class="drawer-item" onclick="openSupport();closeDrawer()">💬 <span data-i18n="support">Поддержка</span></button>
+      <button class="drawer-item" onclick="toggleLang();buildDrawer();">🌐 <span data-i18n="language">Язык</span>: <span id="drawerLang">RU</span></button>
+      <button class="drawer-item" onclick="toggleTheme();">🌓 <span data-i18n="theme">Тема</span></button>
+      <button class="drawer-item" onclick="logout();closeDrawer();">⎋ <span data-i18n="logout">Выйти</span></button>
+    </div>
+  </div>
   <div id="toast"></div>
 
   <script>
     const API = (window.location.origin && window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:3000') + '/api';
+
+    const SUPPORT_TG = 'dsjustben'; // ← свой username Telegram без @
+    const I18N = {
+      ru: {
+        login: 'Войти', register: 'Регистрация', remember: 'Запомнить меня', forgot: 'Забыли пароль?',
+        ration: 'Рацион', support: 'Поддержка', language: 'Язык', theme: 'Тема', logout: 'Выйти',
+        menu_home: 'Главная', menu_menu: 'Меню', menu_cart: 'Корзина', menu_orders: 'Заказы', menu_profile: 'Профиль',
+        menu_partner_orders: 'Заказы кухни', toast_forgot: 'Вход по номеру телефона, пароль не нужен',
+        welcome: 'Еда — это забота. Пусть каждый приём пищи будет тёплым и настоящим.'
+      },
+      uz: {
+        login: 'Kirish', register: "Ro'yxatdan o'tish", remember: 'Meni eslab qol', forgot: 'Parolni unidingizmi?',
+        ration: 'Ratsion', support: 'Yordam', language: 'Til', theme: 'Mavzu', logout: 'Chiqish',
+        menu_home: 'Bosh sahifa', menu_menu: 'Menyu', menu_cart: 'Savat', menu_orders: 'Buyurtmalar', menu_profile: 'Profil',
+        menu_partner_orders: 'Oshxona buyurtmalari', toast_forgot: 'Telefon raqami bilan kiriladi, parol kerak emas',
+        welcome: "Oziq-ovqat — bu g'amxo'rlik. Har bir taom samimiy va issiq bo'lsin."
+      },
+      en: {
+        login: 'Sign in', register: 'Sign up', remember: 'Remember me', forgot: 'Forgot password?',
+        ration: 'Meal plan', support: 'Support', language: 'Language', theme: 'Theme', logout: 'Log out',
+        menu_home: 'Home', menu_menu: 'Menu', menu_cart: 'Cart', menu_orders: 'Orders', menu_profile: 'Profile',
+        menu_partner_orders: 'Kitchen orders', toast_forgot: 'Sign in with your phone number — no password needed',
+        welcome: 'Food is care. May every meal feel warm and real.'
+      }
+    };
+    let lang = localStorage.getItem('hf_lang') || 'ru';
+    let theme = localStorage.getItem('hf_theme') || 'light';
+
     const STATUS_FLOW = ['pending','confirmed','cooking','ready','delivering','delivered'];
     const CATS = ['Все','Завтрак','Обед','Ужин','ПП','Супы','Закуска'];
-        const DISH_IMG = {
-      'd-001':'https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=900&q=80',
-      'd-002':'https://images.unsplash.com/photo-1510693206972-df098062cb71?auto=format&fit=crop&w=900&q=80',
-      'd-003':'https://images.unsplash.com/photo-1485921325833-c519f76c4927?auto=format&fit=crop&w=900&q=80',
-      'd-004':'https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=900&q=80',
-      'd-005':'https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=900&q=80',
-      'd-006':'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80',
-      'd-007':'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80',
-      'd-008':'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80',
-      'd-009':'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80',
-      'd-010':'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&w=900&q=80',
-      'd-011':'https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=900&q=80',
-      'd-012':'https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?auto=format&fit=crop&w=900&q=80',
-      'd-013':'https://images.unsplash.com/photo-1432139555190-58524dae6a55?auto=format&fit=crop&w=900&q=80',
-      'd-014':'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=900&q=80',
-      'd-015':'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80',
-      'd-016':'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?auto=format&fit=crop&w=900&q=80',
-      'd-017':'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=900&q=80',
-      'd-018':'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=900&q=80',
-      'd-019':'https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&w=900&q=80',
-      'd-020':'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=80',
-      'd-021':'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80',
-      'd-022':'https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=900&q=80'
+            const DISH_IMG = {
+      'd-001':'https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=1000&q=80',
+      'd-002':'https://images.unsplash.com/photo-1510693206972-df098062cb71?auto=format&fit=crop&w=1000&q=80',
+      'd-003':'https://images.unsplash.com/photo-1485921325833-c519f76c4927?auto=format&fit=crop&w=1000&q=80',
+      'd-004':'https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=1000&q=80',
+      'd-005':'https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=1000&q=80',
+      'd-006':'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=1000&q=80',
+      'd-007':'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1000&q=80',
+      'd-008':'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1000&q=80',
+      'd-009':'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1000&q=80',
+      'd-010':'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&w=1000&q=80',
+      'd-011':'https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=1000&q=80',
+      'd-012':'https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?auto=format&fit=crop&w=1000&q=80',
+      'd-013':'https://images.unsplash.com/photo-1432139555190-58524dae6a55?auto=format&fit=crop&w=1000&q=80',
+      'd-014':'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=1000&q=80',
+      'd-015':'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80',
+      'd-016':'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?auto=format&fit=crop&w=1000&q=80',
+      'd-017':'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=1000&q=80',
+      'd-018':'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1000&q=80',
+      'd-019':'https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&w=1000&q=80',
+      'd-020':'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1000&q=80',
+      'd-021':'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1000&q=80',
+      'd-022':'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=1000&q=80'
     };
     const KITCHEN_IMG = {
-      'kit-001':'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=900&q=80',
-      'kit-002':'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=900&q=80',
-      'kit-003':'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=80',
-      'kit-004':'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80',
-      'kit-005':'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=80'
+      'kit-001':'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1000&q=80',
+      'kit-002':'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1000&q=80',
+      'kit-003':'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1000&q=80',
+      'kit-004':'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1000&q=80',
+      'kit-005':'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1000&q=80'
     };
-    const FALLBACK = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80';
+    const FALLBACK = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=80';
 
     let user=null, kitchens=[], menu=[], reviews=[], qtyMap={}, activeCat='Все', filterKitchen='all', authMode='login', maxKcal=0;
     let lastOrderId=localStorage.getItem('hf_last_order')||'';
@@ -667,14 +894,36 @@
     const dishImg=id=>DISH_IMG[id]||FALLBACK;
     const kitImg=id=>KITCHEN_IMG[id]||FALLBACK;
 
-    function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+    function showSkeleton(elId, n){
+      const el = $(elId); if(!el) return;
+      el.innerHTML = `<div class="skel-row">${Array.from({length:n||4}).map(()=>'<div class="skeleton skel-card"></div>').join('')}</div>`;
+    }
+    async function refreshHome(){
+      showSkeleton('popularList', 3);
+      showSkeleton('kitchensList', 4);
+      try {
+        kitchens = await (await fetch(API+'/kitchens')).json();
+        menu = await (await fetch(API+'/menu')).json();
+        reviews = await (await fetch(API+'/reviews')).json().catch(()=>reviews||[]);
+        renderPopular(); renderKitchens();
+        toast('Обновлено', true);
+      } catch(e) { toast('Не удалось обновить'); }
+    }
+    function toast(m, ok){
+      const t=$('toast');
+      t.textContent=m;
+      t.classList.toggle('ok', !!ok);
+      t.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer=setTimeout(()=>t.classList.remove('show'),2400);
+    }
 
     function toggleAuthMode(){
       authMode=authMode==='login'?'register':'login';
       const reg=authMode==='register';
       $('authTitle').textContent=reg?'Регистрация':'Вход';
       $('authSub').textContent=reg?'Создайте аккаунт по номеру':'Введите номер телефона';
-      $('demoBox').style.display=reg?'none':'block';
+      if($('demoBox')) $('demoBox').style.display=reg?'none':'block';
       $('registerFields').classList.toggle('hidden',!reg);
       $('btnAuthPrimary').textContent=reg?'Зарегистрироваться':'Войти';
       $('btnAuthSecondary').textContent=reg?'Уже есть аккаунт':'Регистрация';
@@ -682,6 +931,63 @@
       if(reg){
         setTimeout(()=>{ const el=$('loginPhone'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); },50);
       }
+    }
+
+    function applyTheme(){
+      document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+      localStorage.setItem('hf_theme', theme);
+      const icon = theme === 'dark' ? '☀️' : '🌙';
+      ['btnTheme','btnThemeLogin'].forEach(id => { const el=$(id); if(el) el.textContent = icon; });
+    }
+    function toggleTheme(){ theme = theme === 'dark' ? 'light' : 'dark'; applyTheme(); }
+
+    function applyLang(){
+      localStorage.setItem('hf_lang', lang);
+      const dict = I18N[lang] || I18N.ru;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.textContent = dict[key];
+      });
+      ['btnLang','btnLangLogin','drawerLang'].forEach(id => {
+        const el = $(id); if (el) el.textContent = lang.toUpperCase();
+      });
+      if ($('welcomeText') && dict.welcome) $('welcomeText').textContent = dict.welcome;
+      document.documentElement.lang = lang === 'uz' ? 'uz' : lang === 'en' ? 'en' : 'ru';
+    }
+    function toggleLang(){
+      lang = lang === 'ru' ? 'uz' : lang === 'uz' ? 'en' : 'ru';
+      applyLang(); buildDrawer();
+    }
+
+    function forgotPassword(){
+      toast((I18N[lang]||I18N.ru).toast_forgot);
+    }
+
+    function openDrawer(){
+      buildDrawer();
+      $('drawerBg').classList.add('show');
+    }
+    function closeDrawer(){ $('drawerBg').classList.remove('show'); }
+
+    function buildDrawer(){
+      const dict = I18N[lang]||I18N.ru;
+      const items = [];
+      if (isClient() || isAdmin()) {
+        items.push(['home','🏠',dict.menu_home],['menu','🍽',dict.menu_menu],['ctor','🧩',dict.ration],
+          ['cart','🛒',dict.menu_cart],['track','📦',dict.menu_orders],['profile','👤',dict.menu_profile]);
+      }
+      if (isPartner()) {
+        items.push(['orders','📋',dict.menu_partner_orders],['profile','👤',dict.menu_profile]);
+      }
+      if (isAdmin()) {
+        if (!items.find(x=>x[0]==='orders')) items.push(['orders','📋',dict.menu_orders]);
+        if (!items.find(x=>x[0]==='home')) items.unshift(['home','🏠',dict.menu_home]);
+      }
+      const pending = window.__pendingOrders || 0;
+      $('drawerItems').innerHTML = items.map(([id,ic,label]) =>
+        `<button class="drawer-item" onclick="tab('${id}');closeDrawer();">${ic} ${label}${id==='orders'&&pending?`<span class="badge-n">${pending}</span>`:''}</button>`
+      ).join('');
+      if ($('drawerLang')) $('drawerLang').textContent = lang.toUpperCase();
     }
 
     async function doAuth(){
@@ -693,23 +999,34 @@
           if(!name)return toast('Введите имя');
           const r=await fetch(API+'/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,name,role:'client'})});
           if(!r.ok)throw new Error((await r.json()).message||'Ошибка');
-          user=await r.json(); toast('Аккаунт создан');
+          user=await r.json(); toast('Аккаунт создан', true);
         }else{
           const r=await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone})});
           if(!r.ok)throw new Error((await r.json()).message||'Ошибка');
           user=await r.json(); toast('Привет, '+user.name);
         }
-        localStorage.setItem('hf_user',JSON.stringify(user));
+        if ($('rememberMe')?.checked) {
+          localStorage.setItem('hf_user', JSON.stringify(user));
+          localStorage.setItem('hf_remember', '1');
+        } else {
+          sessionStorage.setItem('hf_user', JSON.stringify(user));
+          localStorage.removeItem('hf_user');
+          localStorage.setItem('hf_remember', '0');
+        }
         await boot();
       }catch(e){toast(e.message)}
     }
 
     function logout(){
-      user=null; localStorage.removeItem('hf_user');
+      user=null;
+      localStorage.removeItem('hf_user');
+      sessionStorage.removeItem('hf_user');
       $('view-app').classList.add('hidden');
       $('view-login').classList.remove('hidden');
       $('bottomNav').classList.remove('show');
+      $('fabMenu')?.classList.remove('show');
       $('cartBar').classList.remove('show');
+      closeDrawer();
     }
 
     function fillProfile(){
@@ -735,18 +1052,17 @@
         });
         if(!r.ok) throw new Error((await r.json()).message || 'Ошибка');
         user = await r.json();
-        localStorage.setItem('hf_user', JSON.stringify(user));
+        if (localStorage.getItem('hf_remember') !== '0') localStorage.setItem('hf_user', JSON.stringify(user));
+        else sessionStorage.setItem('hf_user', JSON.stringify(user));
         $('userChip').textContent = user.name;
         if($('orderAddress') && user.address) $('orderAddress').value = user.address;
         if($('orderName')) $('orderName').value = user.name;
-        toast('Профиль сохранён');
+        toast('Профиль сохранён', true);
       }catch(e){ toast(e.message); }
     }
 
     function openSupport(){
-      const msg = encodeURIComponent('Здравствуйте! Нужна помощь по HomeFood.');
-      window.open('https://t.me/share/url?url=&text=' + msg, '_blank');
-      toast('Откройте чат поддержки');
+      window.open('https://t.me/' + SUPPORT_TG, '_blank');
     }
 
     async function boot(){
@@ -792,7 +1108,9 @@
           <span class="ic">${ic}${id==='orders'&&pending?`<span class="nav-badge">${pending}</span>`:''}</span>
           <span>${label}</span>
         </button>`).join('');
-      $('bottomNav').classList.add('show');
+      $('bottomNav').classList.remove('show');
+      $('fabMenu')?.classList.add('show');
+      buildDrawer();
     }
 
     function tab(name){
@@ -837,7 +1155,8 @@
 
     function dishCard(d, compact){
       const src = dishImg(d.id);
-      return `<article class="card" onclick="openDish('${d.id}')" style="cursor:pointer">
+      const accent = d.kitchenId ? (' kit-accent-' + d.kitchenId) : '';
+      return `<article class="card${accent}" onclick="openDish('${d.id}')" style="cursor:pointer">
         <div class="card-img">
           <img src="${src}" alt="${esc(d.name)}" loading="lazy"
             onerror="this.onerror=null;this.src='${FALLBACK}'" />
@@ -914,7 +1233,7 @@
       let list=kitchens;
       if(searchQ)list=list.filter(k=>(k.name+' '+(k.description||'')).toLowerCase().includes(searchQ));
       $('kitchensList').innerHTML=list.map(k=>`
-        <article class="card kit-card" onclick="openKitchen('${k.id}')" style="cursor:pointer">
+        <article class="card kit-card kit-accent-${k.id}" onclick="openKitchen('${k.id}')" style="cursor:pointer">
           <div class="card-img">
             <img src="${kitImg(k.id)}" alt="${esc(k.name)}" loading="lazy"
               onerror="this.onerror=null;this.src='${FALLBACK}'" />
@@ -1081,7 +1400,7 @@ function renderKitFilters(){
         const o=await r.json();
         lastOrderId=o.id; localStorage.setItem('hf_last_order',o.id);
         qtyMap={}; updateCartBar();
-        toast('Заказ '+o.orderNumber);
+        toast('Заказ '+o.orderNumber, true);
         tab('track'); loadTrack();
       }catch(e){toast(e.message)}
       finally{orderSubmitting=false}
@@ -1167,7 +1486,7 @@ function renderKitFilters(){
         if(isPartner()&&user.kitchenId)orders=orders.filter(o=>o.kitchenId===user.kitchenId);
         if(isClient())orders=orders.filter(o=>o.clientPhone===user.phone);
         const pending=orders.filter(o=>o.status==='pending').length;
-        if(isPartner()||isAdmin())buildNav(pending);
+        window.__pendingOrders=pending; if(isPartner()||isAdmin())buildNav(pending); buildDrawer();
         const manage=isPartner()||isAdmin();
         $('ordersList').innerHTML=orders.length?orders.map(o=>orderCard(o,manage)).join('')
           :'<div class="empty">Заказов нет</div>';
@@ -1394,9 +1713,13 @@ function renderKitFilters(){
     }
 
     (async function init(){
-      const s=localStorage.getItem('hf_user');
+      applyTheme();
+      applyLang();
+      const remember = localStorage.getItem('hf_remember') !== '0';
+      const s = remember ? localStorage.getItem('hf_user') : sessionStorage.getItem('hf_user') || localStorage.getItem('hf_user');
       if(s){try{user=JSON.parse(s);await boot()}catch{}}
-      else $('loginPhone').value='+998903333333';
+      else if($('loginPhone')) $('loginPhone').value='+998903333333';
+      if($('rememberMe')) $('rememberMe').checked = remember;
     })();
   </script>
 </body>
